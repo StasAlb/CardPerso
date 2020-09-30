@@ -1,0 +1,417 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WebApplication1.Account.ChangePassword" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAIAAAAAIAAAA=</HashCode>
+      <FileName>Account\ChangePassword.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication1.Account.ChangePasswordSuccess" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Account\ChangePasswordSuccess.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Account.Login" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAIAAAE=</HashCode>
+      <FileName>Account\Login.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Account.Restricted" Collapsed="true">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Account\Restricted.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.AddComment" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAEAAAAAIAAAIAAAQAIAAAgCAAAAACAAIAAQA=</HashCode>
+      <FileName>AddComment.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Bank" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAABACAACAIAAgIAAIAgABgAAAAABEACAAYAAAA=</HashCode>
+      <FileName>Bank.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Branch" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BBAAAAABACAACAIAAAIAAIAgAAgQBCAABEgiAAYAAAA=</HashCode>
+      <FileName>Branch.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.BranchAddOffice" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAMAAAIAAAAAIACAACgAAAACAAIAAQA=</HashCode>
+      <FileName>BranchAddOffice.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.BranchEdit" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAEACAAAIAAQIEAAQAIIKQACAAAAACAAIAAQA=</HashCode>
+      <FileName>BranchEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Card" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABgAABACACiECGAQAgIBABCAAggAAIBEAAACAAIAABE=</HashCode>
+      <FileName>Card.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Utilities" Collapsed="true">
+    <Position X="12.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Card.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Catalog" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAIAAAA=</HashCode>
+      <FileName>Catalog.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.CatalogEdit" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAEAAIAAAIAAAQAIAAAACAAAAACAAIAAQA=</HashCode>
+      <FileName>CatalogEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Catalogs" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAEAAAAAIAAAAAAAAIAAAA=</HashCode>
+      <FileName>Catalogs.Master.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ConfField" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAQAIIAAACCAAAAAAAIAAQA=</HashCode>
+      <FileName>ConfField.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Courier" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAACAABACAACAIAAAIAAIAgAAhAAAAABEACAAYAAAA=</HashCode>
+      <FileName>Courier.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ExcelAp" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAQAAACBACBEAAhAIAAJRQQBAQEAEEAAABgAAGACQA=</HashCode>
+      <FileName>ExcelAp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.FltCard" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BBgFAAgBEECAAAIAAAoACUVAIPD/ACEAxABCCAIAIQE=</HashCode>
+      <FileName>FltCard.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.FltPurchase" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQEACAAAIAAAoAAEBAIAAAASAAQAACAAIAAQA=</HashCode>
+      <FileName>FltPurchase.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.FltStorage" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAAEAAEAAAAAAIAAABAIAAAACAAAAACAAYAAQA=</HashCode>
+      <FileName>FltStorage.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.FltStorDoc" Collapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAgAIAAAoAAEBAIAIAECAAQAACAgIAAQA=</HashCode>
+      <FileName>FltStorDoc.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.MyProd" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FuncClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.FuncClass" Collapsed="true">
+    <Position X="12.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>FuncClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.GenDoc" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAEAABCCACAAAAAAIAAAEKkgBAAAAAAAAAAbCQAA=</HashCode>
+      <FileName>GenDoc.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ListDeliver" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABgCAAABACAQCAIAAAIAAIAgAAwYAAAABEACAAYAAAA=</HashCode>
+      <FileName>ListDeliver.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ListDeliverEdit" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACEAAEAAKAAAIAAARAIEAAACAAIAACAAIAAQA=</HashCode>
+      <FileName>ListDeliverEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Manufacturer" Collapsed="true">
+    <Position X="12.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAABACAACAIAAAIAAIBgAAgAAAAAJEACAAYAAAA=</HashCode>
+      <FileName>Manufacturer.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Product" Collapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAhASAACAIAAQIAAICgAAgAAAAgBMACAFZAIIA=</HashCode>
+      <FileName>Product.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ProductAtt" Collapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAABACAACAIAAAIACIAhAAgAAAAABEACAAYAAAA=</HashCode>
+      <FileName>ProductAtt.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ProductAttEdit" Collapsed="true">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAEAAQAAKAQAIAAAwAIAAAACAAIEACQAJgAQA=</HashCode>
+      <FileName>ProductAttEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.ProductEdit" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEDAACEAAEABKAAAIAAAZAIAAgACAAIAACAAJAAQA=</HashCode>
+      <FileName>ProductEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Purchase" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAgADGwCC4QAwKAABCCBAggAIBFCMACBBMAAkA=</HashCode>
+      <FileName>Purchase.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.PurchaseDogEdit" Collapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAQEACAAAKAAAIAAARAIABwgSAAQIACAAIAAwA=</HashCode>
+      <FileName>PurchaseDogEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.PurchaseProductEdit" Collapsed="true">
+    <Position X="12.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAAAACEAAAAAKAQAIAAARAIACDAKAAAAAGAAIAAQA=</HashCode>
+      <FileName>PurchaseProductEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Storage" Collapsed="true">
+    <Position X="7.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAACCACCAQAgIAABSAAAgAAAAEAAACAAYAACA=</HashCode>
+      <FileName>Storage.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.StorDoc" Collapsed="true">
+    <Position X="9.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BICgAQAAgAGxgSJUh0IIIhigBgiEKJFETNJqCFMAAiw=</HashCode>
+      <FileName>StorDoc.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.StorDocCardEdit" Collapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAECAAAAOAAAIAAAQCIAAACCEAAAAGAAIAAQA=</HashCode>
+      <FileName>StorDocCardEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.StorDocCardRec" Collapsed="true">
+    <Position X="12.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAIAAAEACAACMAAAoAAAEAIAgAiCAAAAAGAAIAEQA=</HashCode>
+      <FileName>StorDocCardRec.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.StorDocEdit" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIhACCADMACACIOAIAIAAARAIGBwmCAMIIBCAgYCAwA=</HashCode>
+      <FileName>StorDocEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.StorDocProductEdit" Collapsed="true">
+    <Position X="2.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABIAAAACEAAAAAKIQAIAAAQAIACDCCAAgAAGAAIBAQA=</HashCode>
+      <FileName>StorDocProductEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Supplier" Collapsed="true">
+    <Position X="4" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAFACAACAIAAAIAAIAgAAhAAAAABEACAAYAAAA=</HashCode>
+      <FileName>Supplier.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.Administration" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAIAAIA=</HashCode>
+      <FileName>Administration\Administration.Master.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.UserClass" Collapsed="true">
+    <Position X="5.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEgAAAAAAAAgAAABAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Administration\Classes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.ServiceClass" Collapsed="true">
+    <Position X="5.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAgQAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Administration\Classes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.EMail" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAIAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Administration\EMail.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.FltUsers" Collapsed="true">
+    <Position X="11" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAEAAQAAIAAAgAAAEAIAAAQCAAAAAAAgIAAUA=</HashCode>
+      <FileName>Administration\FltUsers.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.LogView" Collapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEBAAAAACAACAAAAIAAAAAECGAAIAAAAAAAABJAAAA=</HashCode>
+      <FileName>Administration\LogView.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.ManageRoles" Collapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAgABACAACAAAAAAUAIAwAAEAAAAABEAAQAYAACA=</HashCode>
+      <FileName>Administration\ManageRoles.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.ManageUser" Collapsed="true">
+    <Position X="11" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JBACAAABCSAACAIQAgAAAJAgAACAAAAEBEKAAAYAACg=</HashCode>
+      <FileName>Administration\ManageUsers.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.Reminders" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Administration\Reminders.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.RoleEdit" Collapsed="true">
+    <Position X="4" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAQAAIAAAAAAAAAIACAACAAAAAAAAIAAQA=</HashCode>
+      <FileName>Administration\RoleEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.UserEdit" Collapsed="true">
+    <Position X="7.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAgAAAAIAAACAAAAACAAAIAAEA=</HashCode>
+      <FileName>Administration\UserAdd.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.UserEdit1" Collapsed="true">
+    <Position X="9.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAQAAgBgCEEAAAgCAAAgCAAIQAAACQACQAAABYoAQA=</HashCode>
+      <FileName>Administration\UserEdit.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardPerso.Administration.UserRole" Collapsed="true">
+    <Position X="11" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAIAAAACAAAAAAAAIAAQA=</HashCode>
+      <FileName>Administration\UserRole.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OstCard.CardPerso.CardPerso" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAABAACAAAAAAYQAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>CardPerso.Master.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OstCard.CardPerso._Default" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Default.aspx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="CardPerso.TypeDoc" Collapsed="true">
+    <Position X="2.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAEAgAAAAEAAAAAIAAAECCgAAAAAAAAAAQAA=</HashCode>
+      <FileName>FuncClass.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CardPerso.TypeFormDoc" Collapsed="true">
+    <Position X="4" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAIAAAAIAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FuncClass.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CardPerso.Administration.Restrictions" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAACAAAACICAAEAAAEAABAAAwgAAAAgAACAAAACgAA=</HashCode>
+      <FileName>Administration\Classes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

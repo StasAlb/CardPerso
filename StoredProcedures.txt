@@ -1,0 +1,69 @@
+﻿Все процедуры в параметре @Res возращают
+1 - все хорошо
+0 - ошибка
+	в этом случае в параметре @Message описание ошибки
+
+
+1. UserAdd
+	@UserLogin nvarchar(255) - логин пользователя
+	@email nvarchar(255) - емейл пользователя
+	@name nvarchar(255) - имя
+	@sname nvarchar(255) - отчество
+	@lname nvarchar(255) - фамилия
+	@position nvarchar(255) - должность
+	@branch varchar(15) - код подразделения
+	@Res int output
+	@Message nvarchar(255) output
+
+возможные описания ошибок
+	Login already exists - данный логин занят
+	Branch not found - код подразделения не найден
+	стандартные ошибки sql server
+
+2. UserBlock
+	@UserLogin nvarchar(255) - логин пользователя
+	@Res int output
+	@Message nvarchar(255) output
+
+возможные описания ошибок
+	Login not found - логин не  найден
+	стандартные ошибки sql server
+
+3. UserUnblock
+	@UserLogin nvarchar(255) - логин пользователя
+	@Res int output
+	@Message nvarchar(255) output
+
+возможные описания ошибок
+	Login not found - логин не  найден
+	стандартные ошибки sql server
+
+Remarks
+	При разблокировке пользователя пароль сбрасывается в дефолтный (123)
+
+4. UserEdit
+	@UserLogin nvarchar(255) - логин пользователя
+	@email nvarchar(255) - емейл пользователя
+	@name nvarchar(255) - имя
+	@sname nvarchar(255) - отчество
+	@lname nvarchar(255) - фамилия
+	@position nvarchar(255) - должность
+	@branch varchar(15) - код подразделения
+	@Res int output 
+	@Message nvarchar(255) output
+
+возможные описания ошибок
+	Login not found - логин не  найден
+	Branch not found - код подразделения не найден (если был задан)
+	стандартные ошибки sql server
+
+Remarks
+	Если что-то менять не надо, то передавайте этот параметр как NULL
+
+
+
+
+
+
+
+

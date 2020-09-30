@@ -1,0 +1,109 @@
+Я так понимаю, ориентируемся на json?
+
+1. Выдача карты в 2 этапа
+1.1 Подготовка к выдаче карты
+
+	метод PUT	
+	ExternalCardId
+	System
+	Operator
+	Branch
+	
+	Возвращаемое значение:
+	в случае успешной 
+	{
+		status: "ok",
+		OperationId: "12345"
+	}
+	
+	в случае ошибки
+	{
+		status: "error",
+		message: "...."
+	}
+	
+	Варианты ошибок:
+	-Текущий статус карты не подразумевает выдачу
+	-Карта с данным ExternalCardId не найдена
+	-Карта с данным ExternalCardId находится не в данном отделении
+	
+	
+	
+1.2 Подтверждение/отмена выдачи
+
+	метод PUT
+	OperationId
+	OperationType
+	System
+	Operator
+	
+	Возвращаемое значение
+	в случае успешной
+	{
+		status: "ok"
+	}
+	
+	в случае ошибки
+	{
+		status: "error",
+		message: "...."
+	}
+	
+	Варианты ошибок:
+	-Документ с OperationId не найден
+	-Документ с OperationId не может быть подтвержден (или отклонен)
+	
+	
+2. Выдача карты в один этапа
+	метод PUT
+	{
+		cards : [
+		{
+			ExternalCardId: "12345"
+		},
+		{
+			ExternalCardId: "12346"
+		}		
+		],
+		System: "...",
+		Operator: "...",
+		Branch: "..."
+	}
+	
+	Возвращаемое значение:
+	{
+		"cardsresponse" : [
+			{
+				ExternalCardId: "12345",
+				status : "ok"
+			},
+			{
+				ExternalCardId: "12346",
+				status: "error",
+				message: "..."
+			}			
+		],
+		OperationId: "12346"
+	}
+	
+	Варианты ошибок:
+	-Текущий статус карты не подразумевает выдачу
+	-Карта с данным ExternalCardId не найдена
+	-Карта с данным ExternalCardId находится не в данном отделении
+
+	
+3. Запрос статуса карты 
+	метод GET
+		ExternalCardId
+		
+	Возвращаемое значение	
+	{
+		CardStatus: "..."
+	}
+	
+	в случае ошибки:
+	{
+		status: "error",
+		message: "Карта с данным ExternalCardId не найдена"
+	}
+	

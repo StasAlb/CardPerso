@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<configuration>
+  <configSections>
+    <section name="movingstock" type="CardPerso.MovingStockSection, CardPerso"/>
+    <section name="sms_info" type="CardPerso.SmsInfoSection, CardPerso"/>
+  </configSections>
+  <movingstock>
+    <fields>
+      <add product="MasterCard">
+        <columns>
+          <add nums="1" debet="91203810300191020005" credit="91202810800191020001" ground="передача  на персонализацию заготовок пк  (MasterCard)"/>
+          <add nums="2+3" debet="99999810400020000001" credit="91203810300191020005" ground="выдано ГО персонализированных пк  (MasterCard)"/>
+          <add nums="4" debet="99999810400020000001" credit="91203810300191020005"
+            ground="выдано персонализированных пк в территориальные подразделения  (MasterCard)…"/>
+          <add nums="5" debet="91203810900191020007" credit="91203810300191020005"
+            ground="выдано  в обращение  транспортные  карты  MasterCard согласно договора № 13/10 от 08.02.2012"/>
+          <add nums="6" debet="99999810400020000001" credit="91202810800191020001" ground="выдано заготовок банковских карт  (MasterCard)"/>
+          <add nums="7" debet="91203810600191020006" credit="91203810300191020005" ground="выдача персонализированных пк на упаковку  (MasterCard)"/>
+          <add nums="8" debet="91202810800191020001" credit="99999810400020000001" ground="прием в хранилище заготовок карт  (MasterCard)"/>
+          <add nums="9" debet="91203810300191020005" credit="99999810400020000001"
+            ground="прием в хранилище персонализированных карт и пин-конвертов  (MasterCard)"/>
+          <add nums="10" debet="91203810200191020008" credit="99999810400020000001"
+            ground="прием в хранилище персонал. карт, Пин-конвертов на уничтожение (MasterCard)"/>
+          <add nums="11" debet="91203810300191020005" credit="91203810600191020006" ground="прием в хранилище персонализированные пк из упаковки  (MasterCard)"/>
+          <add nums="12+13+14" debet="99999810400020000001" credit="91203810300191020005" ground="Уничтоженные персонализированные пк  (MasterCard)"/>
+          <add nums="15" debet="91203810300191020005" credit="91203810200191020008" ground="списание карт ожидающих уничтожение (MasterCard)"/>
+        </columns>
+      </add>
+      <add product="VisaCard">
+        <columns>
+          <add nums="1" debet="91203810200191010005" credit="91202810700191010001" ground="передача  на персонализацию заготовок пк (Visa)"/>
+          <add nums="2+3" debet="99999810400020000001" credit="91203810200191010005" ground="выдано ГО персонализированных пк (Visa)"/>
+          <add nums="4" debet="99999810400020000001" credit="91203810200191010005"
+            ground="выдано персонализированных пк в территориальные подразделения (Visa)"/>
+          <add nums="5" debet="91203810800191010007" credit="91203810200191010005"
+            ground="выдано  в обращение  транспортные  карты Visa согласно договора № 13/10 от 08.02.2012"/>
+          <add nums="6" debet="99999810400020000001" credit="91202810700191010001" ground="выдано заготовок банковских карт (Visa)"/>
+          <add nums="7" debet="91203810500191010006" credit="91203810200191010005" ground="выдача персонализированных пк на упаковку (Visa)"/>
+          <add nums="8" debet="91202810700191010001" credit="99999810400020000001" ground="передача  на персонализацию заготовок пк (Visa)"/>
+          <add nums="9" debet="91203810200191010005" credit="99999810400020000001" ground="прием в хранилище персонализированных карт и пин-конвертов (Visa)"/>
+          <add nums="10" debet="91203810100191010008" credit="99999810400020000001"
+            ground="прием в хранилище персонал. карт, Пин-конвертов на уничтожение (Visa)"/>
+          <add nums="11" debet="91203810200191010005" credit="91203810500191010006" ground="прием в хранилище персонализированные пк из упаковки (Visa)"/>
+          <add nums="12+13+14" debet="99999810400020000001" credit="91203810200191010005" ground="Уничтоженные персонализированные пк (Visa)"/>
+          <add nums="15" debet="91203810200191010005" credit="91203810200191020008" ground="списание карт ожидающих уничтожение (MasterCard)"/>
+        </columns>
+      </add>
+      <add product="MirCard">
+        <columns>
+          <add nums="1" debet="91203810400191030005" credit="91202810900191030001" ground="передача  на персонализацию заготовок пк (Карты МИР)"/>
+          <add nums="2+3" debet="99999810400020000001" credit="91203810400191030005" ground="выдано ГО персонализированных пк (Карты МИР)"/>
+          <add nums="4" debet="99999810400020000001" credit="91203810400191030005"
+            ground="выдано персонализированных пк в территориальные подразделения (Карты МИР)"/>
+          <add nums="6" debet="99999810400020000001" credit="91202810900191030001" ground="выдано заготовок банковских карт (Карты МИР)"/>
+          <add nums="7" debet="91203810700191030006" credit="91203810400191030005" ground="выдача персонализированных пк на упаковку (Карты МИР)"/>
+          <add nums="8" debet="91202810900191030001" credit="99999810400020000001" ground="прием в хранилище заготовок карт (Карты МИР)"/>
+          <add nums="9" debet="91203810400191030005" credit="99999810400020000001"
+            ground="прием в хранилище персонализированных карт и пин-конвертов  (Карты МИР)"/>
+          <add nums="10" debet="91203810300191030008" credit="99999810400020000001"
+            ground="прием в хранилище персонал. карт, Пин-конвертов на уничтожение (Карты МИР)"/>
+          <add nums="11" debet="91203810400191030005" credit="91203810700191030006" ground="прием в хранилище персонализированные пк из упаковки (Карты МИР)"/>
+          <add nums="12+13+14" debet="99999810400020000001" credit="91203810400191030005" ground="Уничтоженные персонализированные пк (Карты МИР)"/>
+          <add nums="15" debet="91203810400191030005" credit="91203810300191030008" ground="списание карт ожидающих уничтожение (Карты МИР)"/>
+        </columns>
+      </add>
+      <add product="NFCCard">
+        <columns>
+          <add nums="2+3+4" debet="99999810400020000001" credit="91202810200193000001" ground="выдано NFC SIM карт в подразделения"/>
+          <add nums="8" debet="91202810200193000001" credit="99999810400020000001" ground="поступление NFC SIM карт"/>
+        </columns>
+      </add>
+      <add product="ServiceCard">
+        <columns>
+          <add nums="1" debet="91203810800190000005" credit="91202810300190000001" ground="передача  на персонализацию заготовок пк (Сервисные карты)"/>
+          <add nums="2+3" debet="99999810400020000001" credit="91203810800190000005" ground="выдано ГО персонализированных пк (Сервисные карты)"/>
+          <add nums="4" debet="99999810400020000001" credit="91203810800190000005"
+            ground="выдано персонализированных пк в территориальные подразделения (Сервисные карты)"/>
+          <add nums="6" debet="99999810400020000001" credit="91202810300190000001" ground="выдано заготовок банковских карт (Сервисные карты)"/>
+          <add nums="8" debet="91202810300190000001" credit="99999810400020000001" ground="прием в хранилище заготовок карт (Сервисные карты)"/>
+          <add nums="9" debet="91203810800190000005" credit="99999810400020000001"
+            ground="прием в хранилище персонализированных карт и пин-конвертов (Сервисные карты)"/>
+          <add nums="10" debet="91203810700190000008" credit="99999810400020000001"
+            ground="прием в хранилище персонал. карт, Пин-конвертов на уничтожение (Сервисные карты)"/>
+          <add nums="12+13+14" debet="99999810400020000001" credit="91203810800190000005" ground="Уничтоженные персонализированные пк (Сервисные карты)"/>
+          <add nums="15" debet="91203810800190000005" credit="91203810700190000008" ground="списание карт ожидающих уничтожение (Сервисные карты)"/>
+        </columns>
+      </add>
+      <add product="PinConvert">
+        <columns>
+          <add nums="1" debet="91203810100191000005" credit="91202810600191000001" ground="передача  на персонализацию заготовок пк (Пин-конверты)"/>
+          <add nums="2+3" debet="99999810400020000001" credit="91203810100191000005" ground="выдано ГО персонализированных пк (Пин-конверты)"/>
+          <add nums="4" debet="99999810400020000001" credit="91203810100191000005"
+            ground="выдано персонализированных пк в территориальные подразделения (Пин-конверты)"/>
+          <add nums="6" debet="99999810400020000001" credit="91202810600191000001" ground="выдано заготовок банковских карт (Пин-конверты)"/>
+          <add nums="7" debet="91203810400191000006" credit="91203810100191000005" ground="выдача персонализированных пк на упаковку (Пин-конверты)"/>
+          <add nums="8" debet="91202810600191000001" credit="99999810400020000001" ground="прием в хранилище заготовок карт (Пин-конверты)"/>
+          <add nums="9" debet="91203810100191000005" credit="99999810400020000001"
+            ground="прием в хранилище персонализированных карт и пин-конвертов (Пин-конверты)"/>
+          <add nums="10" debet="91203810000191000008" credit="99999810400020000001"
+            ground="прием в хранилище персонал. карт, Пин-конвертов на уничтожение (Пин-конверты)"/>
+          <add nums="11" debet="91203810100191000005" credit="91203810400191000006"
+            ground="прием в хранилище персонализированные пк из упаковки (Пин-конверты)"/>
+          <add nums="12+13+14" debet="99999810400020000001" credit="91202810600191000001" ground="Уничтоженные персонализированные пк (Пин-конверты)"/>
+          <add nums="15" debet="91203810100191000005" credit="991203810000191000008" ground="списание карт ожидающих уничтожение (Пин-конверты)"/>
+        </columns>
+      </add>
+    </fields>
+  </movingstock>
+  <sms_info>
+    <!-- в атрибуте CompanyField через запятую задаются варианты поля Company, для которых будет посылаться sms, если для продукта указано allcards="false"--> 
+	<!--
+    <products CompanyField="F,M D,M S,S">
+      <add bin="5209858" code="GEN" shortname="MC Generation" allcards="true"/>
+      <add bin="4000793" code="UDK" shortname="Visa Evolution" allcards="false"/>
+      <add bin="4000793" code="CRD" shortname="Visa Emotion" allcards="false"/>
+      <add bin="5209858" code="CRD" shortname="MC Emotion" allcards="false"/>
+      <add bin="5209858" code="AUR" shortname="MC Aurum" allcards="false"/>
+    </products>-->
+	<products CompanyField="F,M D,M S,S">
+      <add bin="5209858" code="GEN" shortname="MC Generation" allcards="false"/>
+      <add bin="4000793" code="UDK" shortname="Visa Evolution" allcards="false"/>
+      <add bin="4000793" code="CRD" shortname="Visa Emotion" allcards="true"/>
+      <add bin="5209858" code="CRD" shortname="MC Emotion" allcards="true"/>
+      <add bin="5209858" code="AUR" shortname="MC Aurum" allcards="false"/>
+      <add bin="5209356" code="EMV" shortname="MC Standard1" allcards="false"/>
+      <add bin="5209354" code="PAY" shortname="MC Unembossed1" allcards="false"/>
+      <add bin="5209354" code="PUS" shortname="MC Standard" allcards="false"/>
+      <add bin="5209351" code="MUC" shortname="MC Unembossed" allcards="false"/>                                                                   
+      <add bin="5209354" code="HKU" shortname="MC Unembossed Hockey" allcards="false"/>
+      <add bin="512463" code="BLK" shortname="MC Black Edition" allcards="false"/>
+      <add bin="5209354" code="UCH" shortname="MC Teacher" allcards="false"/>
+      <add bin="5209858" code="UDK" shortname="MC Evolution" allcards="false"/>
+      <add bin="512463" code="LPR" shortname="MC Premium" allcards="false"/>
+      <add bin="5209858" code="KFU" shortname="MC Profkarta" allcards="true"/>
+      <add bin="5370474" code="ELT" shortname="MC World Elite" allcards="false"/>
+      <add bin="4244374" code="PWG" shortname="Visa Gold1" allcards="false"/>
+      <add bin="4244372" code="PWG" shortname="Visa Gold" allcards="false"/>
+      <add bin="4000795" code="VPW" shortname="Visa Platinum" allcards="false"/>
+      <add bin="4073476" code="INF" shortname="Visa Infinite" allcards="false"/>
+      <add bin="4000793" code="LPR" shortname="Visa Premium" allcards="false"/>
+      <add bin="2200530" code="MIR" shortname="МИР" allcards="false"/>
+      <add bin="4244389" code="VBI" shortname="Visa Corporate Самоинкассация" allcards="true"/>
+      <add bin="4244372" code="VBG" shortname="Visa Corporate Gold" allcards="true"/>
+      <add bin="4244389" code="VBC" shortname="Visa Corporate Classic" allcards="true"/>               
+      <add bin="5529580" code="MBS" shortname="MC Corporate Standard" allcards="true"/>
+      <add bin="5529580" code="MBI" shortname="MC Corporate Самоинкассация" allcards="true"/>
+      <add bin="5209854" code="MBG" shortname="MC Corporate Gold" allcards="true"/>
+     </products>     	
+	
+  </sms_info>
+  <appSettings>
+    <add key="DocPath" value="d:\Work\CardPerso\CardPerso\Attachments\"/>
+    <add key="SortListH" value="20"/>
+    <add key="ArchivePath" value="d:\Work\CardPerso\CardPerso\ArchiveDocs\"/>
+    <add key="ImagePath" value="d:\Work\CardPerso\CardPerso\Images\"/>
+    <add key="Transport" value="TRN,TRN1,RNV"/>
+    <add key="DateFormat" value="MM/dd/yyyy"/>
+    <add key="ReminderFilialDay" value="0"/>
+    <add key="SmtpServer" value="smtp1.rambler1.ru"/>
+    <add key="EMailFrom" value="fanf1@rambler.ru"/>
+    <add key="Pwd" value="fanf11"/>
+    <add key="MailRussia" value="Почта России"/>
+    <add key="SchoolProducts" value="5285881_SKU,5285881_KRS,5285881_KRM,5285881_CRS,5285881_CRM,5285881_SKB"/>
+    <add key="ExcludeMemoricProducts"
+      value="5285881_T05;5285881_01T;5285881_05T;5285881_10T;5285881_15T;5285881_00T;5285881_MAG;5285881,5209858_WCH;4646361_01T;4646361_05T;4646361_00T"/>
+    <add key="ExcludeExportDBFBranch" value="4500"/>
+    <add key="ExcludeExportDBFSendClent" value="4599"/>
+    <add key="ExcludeProductsCardsSelect"
+      value="5285881_T05;5285881_01T;5285881_05T;5285881_10T;5285881_15T;5285881_00T;5285881_MAG;5285881,5209858_WCH;4646361_01T;4646361_05T;4646361_00T;4646361_T05;5285881_WCP;5285881_15U;5285883_STU;5209351_MTN;5209354_PBN;5209354_ENN;5209354_SON;5209354_PUN;5209354_RUN;5209351_MUN;5209351_DUN;5209351_DND;4244367_VUN;4244369_VCU;424436_PWN;50841_MAG;5209858_MGZ;5209858_MIN;5209858_MGN;5209858_MIC;5209351_PKN;5285881_RBP;5285881_RBP;5209354_HKN;4244369_VUN"/>
+    <!--    <add key="URLRMKService" value="http://localhost:8899/RmkTwoCaPService"/>-->
+    <add key="URLRMKService" value=""/>
+    <add key="EnableRMK" value="true"/>
+    <add key="ErrorDir" value="c:\cardperso"/>
+    <add key="AccountablePersons" value="BDD6075C-14EA-4B04-9C9D-B43FB232C43B"/>
+    <add key="SmsExcludeBranch" value="4502"/>
+    <add key="CourierFolder" value="c:\temp"/>
+    <add key="CourierBranches" value="0911"/>
+    <add key="aspnet:MaxJsonDeserializerMembers" value="1000"/>
+    <add key="ReportLimit" value="10"/>
+    <add key="AllBranchsUser" value="4508,stas"/>
+    <add key="CourierActBranch" value="4508,6602"/>
+  </appSettings>
+  <connectionStrings>
+    <add name="ConString" connectionString="Data Source=localhost;Initial Catalog=AkBarsFull_2;User Id=sa;Password=123;Connection Timeout=60"/>
+    <!--<add name="ConString" connectionString="Data Source=localhost;Initial Catalog=Uzcard;User Id=sa;Password=123;Connection Timeout=60" />-->
+  </connectionStrings>
+  <!--
+    Описание изменений web.config см. по адресу http://go.microsoft.com/fwlink/?LinkId=235367.
+
+    Следующие атрибуты можно установить с помощью тега <httpRuntime>.
+      <system.Web>
+        <httpRuntime targetFramework="4.5.1" />
+      </system.Web>
+  -->
+  <system.web>
+    <!--
+            Set compilation debug="true" to insert debugging 
+            symbols into the compiled page. Because this 
+            affects performance, set this value to true only 
+            during development.
+        -->
+    <roleManager enabled="true" defaultProvider="MySqlProvider">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Security.SqlRoleProvider" connectionStringName="ConString" applicationName="CardPerso"/>
+      </providers>
+    </roleManager>
+    <membership defaultProvider="MySqlProvider">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Security.SqlMembershipProvider" connectionStringName="ConString" requiresQuestionAndAnswer="false"
+          passwordStrengthRegularExpression="" minRequiredPasswordLength="3" minRequiredNonalphanumericCharacters="0" maxInvalidPasswordAttempts="3"
+          applicationName="CardPerso" requiresUniqueEmail="false"/>
+      </providers>
+    </membership>
+    <profile defaultProvider="MySqlProvider" enabled="true" automaticSaveEnabled="false">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Profile.SqlProfileProvider" connectionStringName="ConString" applicationName="CardPerso"/>
+      </providers>
+      <properties>
+        <add name="UserData" type="CardPerso.Administration.UserClass" serializeAs="Xml"/>
+      </properties>
+    </profile>
+    <compilation debug="true" targetFramework="4.5.1"/>
+    <!--
+            The <authentication> section enables configuration 
+            of the security authentication mode used by 
+            ASP.NET to identify an incoming user. 
+        -->
+    <authentication mode="Forms">
+      <forms loginUrl="~/Account/Login.aspx" timeout="60"/>
+    </authentication>
+    <!--
+            The <customErrors> section enables configuration 
+            of what to do if/when an unhandled error occurs 
+            during the execution of a request. Specifically, 
+            it enables developers to configure html error pages 
+            to be displayed in place of a error stack trace.
+
+        <customErrors mode="RemoteOnly" defaultRedirect="GenericErrorPage.htm">
+            <error statusCode="403" redirect="NoAccess.htm" />
+            <error statusCode="404" redirect="FileNotFound.htm" />
+        </customErrors>
+        -->
+    <identity impersonate="false"/>
+    <authorization>
+      <allow users="*"/>
+      <!--<deny users="?"/> -->
+    </authorization>
+    <globalization enableClientBasedCulture="true" culture="auto" uiCulture="auto" requestEncoding="utf-8" responseEncoding="utf-8"/>
+    <httpRuntime executionTimeout="90" maxRequestLength="1048576"/>
+    <pages controlRenderingCompatibilityVersion="3.5" clientIDMode="AutoID"/>
+  </system.web>
+  <!-- 
+        The system.webServer section is required for running ASP.NET AJAX under Internet
+        Information Services 7.0.  It is not necessary for previous version of IIS.
+    -->
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35"/>
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35"/>
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35"/>
+        <bindingRedirect oldVersion="1.0.0.0-5.2.3.0" newVersion="5.2.3.0"/>
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="false"/>
+  </system.webServer>
+</configuration>

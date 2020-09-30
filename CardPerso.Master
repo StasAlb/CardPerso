@@ -1,0 +1,134 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="CardPerso.master.cs" Inherits="OstCard.CardPerso.CardPerso" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Pragma" content="no-cache" />
+    <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
+    
+    
+    <script type="text/javascript" src="Dialog.js"></script>  
+
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/jquery-2.1.1.js")%>"></script>  
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/jquery-migrate-1.2.1.js")%>"></script>  
+  
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/jquery-ui.js")%>"></script>  
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/jquery-ui-i18n-rus.js")%>"></script>  
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/servertable.js")%>"></script>  
+    
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/dialog.js")%>"></script>  
+    
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/globalize.js")%>"></script>  
+    <script type="text/javascript" src="<%=Page.ResolveClientUrl("~/javascript/globalize.culture.de-DE.js")%>"></script>  
+    
+    
+    <link href="<%=Page.ResolveClientUrl("~/css/jquery-ui.css")%>" rel="stylesheet" type="text/css"/>
+
+
+<!-- 20.09.18 Стас. закомментарил функцию инициализации. Она заполняла комбобоксы фильтра карт и это было долго (из-за запроса на компанию) -->           
+<!-- вроде она больше ничего не делает -->
+<!--
+    <%-- if (Session["ZAPCOMBO"] == null) {--%>
+    <script type="text/javascript"> 
+        $(document).ready(function()
+        {
+            ShowWait("Инициализация, подождите пожалуйста..."); //,{timeOut:500});
+            setTimeout(function()
+            {
+                ajaxJson("FltCard.aspx","", 
+                function(json) 
+                {
+                   HideWait();
+                }, 
+                function(error) 
+                {
+                   HideWait();
+                }, 
+                true);
+            },300);
+          });
+    </script>    
+    <%--}--%>
+  -->  
+       
+    <script type="text/javascript"> 
+        
+        var timerDownTick=null;
+        
+        $(document).ready(function()
+        {
+           
+        });
+          
+        function setTimerDownLoad()
+        {
+            HideWait();
+            if(timerDownTick!=null) clearTimeout(timerDownTick);
+            timerDownTick=setTimeout(timerDownLoad,500);
+        }        
+        
+        function timerDownLoad()
+        {
+            var c=getLocalCookie("downLoadEnd");
+            if(c!=null && c=="+++")
+            {
+                HideWait();
+                if(timerDownTick!=null) clearTimeout(timerDownTick);
+                timerDownTick=null;
+                try 
+                {
+                    setLocalCookie("downLoadEnd","---",{expires:3600});
+                }
+                catch(e) {}
+                return;
+            }
+            timerDownTick=setTimeout(timerDownLoad,500);
+        }
+    </script> 
+          
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>    
+</head>
+<body>
+    <form runat="server">
+    <div class="page">
+        <div class="header" >
+            <div class="title"  style="margin: 5px">
+                <asp:Image ID="Logo" runat="server" ImageUrl="~/Images/perso.gif" Height="40px" />
+            </div>
+            <div class="loginDisplay">                    
+                    <asp:LoginView ID="MainLogin" runat="server">                    
+                        <AnonymousTemplate>
+                            [<a href="~/Account/Login.aspx" ID="MainLoginStatus" runat="server">Войти</a>]
+                        </AnonymousTemplate>
+                        <LoggedInTemplate>
+                            Добро пожаловать, <span class="bold"><asp:LoginName ID="MainLoginName" runat="server" /></span>!<span><%=getDepName()%></span>
+                            [<asp:LoginStatus id="MainLoginStatus" runat="server" LogoutAction="Redirect" LogoutText="Выйти" LogoutPageUrl="~/" OnLoggingOut="MainLoginStatus_OnLoggingOut" />]
+                            <br /><a href="Account/ChangePassword.aspx">Сменить пароль</a>
+                        </LoggedInTemplate>
+                    </asp:LoginView>
+            </div>            
+            <div class="clear hideSkiplink">
+                    <asp:Menu Orientation='Horizontal' ID='NavigationMenu' runat='server' CssClass='menu' EnableViewState='False'>
+                    <Items>
+                    </Items>
+                    </asp:Menu>
+            </div>
+        </div>
+        <div class="main">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"/>
+        </div>
+        
+    </div>
+    
+    
+    </form>
+    <div>
+        <!--#INCLUDE file="dialog.aspx"-->
+    </div>
+    
+</body>
+    
+</html>

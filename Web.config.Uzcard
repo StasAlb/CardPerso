@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appSettings>
+    <add key="ClientType" value="Uzcard"/>
+    <add key="DocPath" value="d:\Work\CardPerso\CardPerso\Attachments\" />
+    <add key="SortListH" value="20" />
+    <add key="ArchivePath" value="d:\Work\OstCardCollection\CardPerso\CardPerso\ArchiveDocs\" />
+    <add key="ImagePath" value="d:\Work\OstCardCollection\CardPerso\CardPerso\Images\" />
+    <add key="DateFormat" value="dd/MM/yyyy" />
+    <add key="SmtpServer" value="smtp1.rambler1.ru" />
+    <add key="EMailFrom" value="fanf1@rambler.ru" />
+    <add key="Pwd" value="fanf11" />
+    <add key="MailRussia" value="Почта России" />
+    <add key="ErrorDir" value="c:\cardperso" />
+    <add key="aspnet:MaxJsonDeserializerMembers" value="1000" />
+    <add key="ReportLimit" value="10" />
+    <add key="AllBranchsUser" value="4508,stas" />
+  </appSettings>
+  <connectionStrings>
+    <!--<add name="ConString" connectionString="Data Source=stas-c;Initial Catalog=AkBarsTemp;User Id=sa;Password=123;Connection Timeout=60"/>-->
+    <add name="ConString" connectionString="Data Source=localhost;Initial Catalog=Uzcard_Mansur;User Id=sa;Password=123;Connection Timeout=60" />
+  </connectionStrings>
+  <system.web>
+    <!--
+            Set compilation debug="true" to insert debugging 
+            symbols into the compiled page. Because this 
+            affects performance, set this value to true only 
+            during development.
+        -->
+    <roleManager enabled="true" defaultProvider="MySqlProvider">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Security.SqlRoleProvider" connectionStringName="ConString" applicationName="CardPerso" />
+      </providers>
+    </roleManager>
+    <membership defaultProvider="MySqlProvider">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Security.SqlMembershipProvider" connectionStringName="ConString" requiresQuestionAndAnswer="false" passwordStrengthRegularExpression="" minRequiredPasswordLength="3" minRequiredNonalphanumericCharacters="0" maxInvalidPasswordAttempts="3" applicationName="CardPerso" requiresUniqueEmail="false" />
+      </providers>
+    </membership>
+    <profile defaultProvider="MySqlProvider" enabled="true" automaticSaveEnabled="false">
+      <providers>
+        <add name="MySqlProvider" type="System.Web.Profile.SqlProfileProvider" connectionStringName="ConString" applicationName="CardPerso" />
+      </providers>
+      <properties>
+        <add name="UserData" type="CardPerso.Administration.UserClass" serializeAs="Xml" />
+      </properties>
+    </profile>
+    <compilation debug="true" targetFramework="4.0" />
+    <!--
+            The <authentication> section enables configuration 
+            of the security authentication mode used by 
+            ASP.NET to identify an incoming user. 
+        -->
+    <authentication mode="Forms">
+      <forms loginUrl="~/Account/Login.aspx" timeout="60" />
+    </authentication>
+    <!--
+            The <customErrors> section enables configuration 
+            of what to do if/when an unhandled error occurs 
+            during the execution of a request. Specifically, 
+            it enables developers to configure html error pages 
+            to be displayed in place of a error stack trace.
+
+        <customErrors mode="RemoteOnly" defaultRedirect="GenericErrorPage.htm">
+            <error statusCode="403" redirect="NoAccess.htm" />
+            <error statusCode="404" redirect="FileNotFound.htm" />
+        </customErrors>
+        -->
+    <identity impersonate="false" />
+    <authorization>
+      <allow users="*" />
+      <!--<deny users="?"/> -->
+    </authorization>
+    <globalization enableClientBasedCulture="true" culture="auto" uiCulture="auto" requestEncoding="utf-8" responseEncoding="utf-8" />
+    <httpRuntime executionTimeout="90" maxRequestLength="1048576" />
+    <pages controlRenderingCompatibilityVersion="3.5" clientIDMode="AutoID" />
+  </system.web>
+  <!-- 
+        The system.webServer section is required for running ASP.NET AJAX under Internet
+        Information Services 7.0.  It is not necessary for previous version of IIS.
+    -->
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+    </assemblyBinding>
+  </runtime>
+    <system.webServer>
+        <modules runAllManagedModulesForAllRequests="false" />
+    </system.webServer>
+</configuration>

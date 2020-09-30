@@ -1,0 +1,24 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/CardPerso.Master" AutoEventWireup="true" CodeBehind="Administration.master.cs" Inherits="CardPerso.Administration.Administration" %>
+<asp:Content ID="AdministrationMenuContent" runat="server" ContentPlaceHolderID="MainContent">
+<script type="text/javascript" src="Admin.js">
+</script>
+<table width="100%" border="0">
+<tr>
+<td valign="top" style="width:210px">
+    <asp:Menu Orientation="Vertical" ID="CatalogMenu" runat="server"
+        CssClass="menu_catalog" EnableViewState="False" IncludeStyleBlock="false">
+    <Items>
+        <asp:MenuItem NavigateUrl="~/Administration/ManageUsers.aspx" Text="Управление пользователями"/>
+        <asp:MenuItem NavigateUrl="~/Administration/ManageRoles.aspx" Text="Управление ролями" />
+        <asp:MenuItem NavigateUrl="~/Administration/LogView.aspx" Text="События" />
+        <asp:MenuItem NavigateUrl="~/Administration/EMail.aspx" Text="E-Mail" />
+    </Items>
+</asp:Menu>
+<!--<asp:MenuItem NavigateUrl="~/Administration/Reminders.aspx" Text="Напоминания"/>-->
+</td>
+<td>
+    <asp:ContentPlaceHolder runat="server" ID="AdministrationContent"/>
+</td></tr>
+</table>
+<asp:HiddenField runat="server" ID="resd_admin" />
+</asp:Content>

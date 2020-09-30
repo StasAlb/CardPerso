@@ -1,0 +1,19 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/CardPerso.Master" AutoEventWireup="true" CodeBehind="Catalogs.master.cs" Inherits="CardPerso.Catalogs" %>
+<asp:Content ID="CatalogHeader" runat="server" ContentPlaceHolderID="HeadContent">
+    <asp:ContentPlaceHolder ID="CatalogHeaderContent" runat="server"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="CatalogMenuContent" runat="server" ContentPlaceHolderID="MainContent">
+    <table width="100%" border="0">
+<tr>
+<td valign="top" width="50px">
+    <asp:Menu Orientation="Vertical" ID="CatalogMenu" runat="server"
+        CssClass="menu_catalog" EnableViewState="False" IncludeStyleBlock="false">
+    <Items>
+    </Items>
+</asp:Menu>
+</td>
+<td>
+    <asp:ContentPlaceHolder runat="server" ID="CatalogContent"/>
+</td></tr>
+</table>
+</asp:Content>
