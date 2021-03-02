@@ -30,7 +30,7 @@ namespace CardPerso.Administration
             DatePickerEnd.FirstDayOfWeek = DatePicker.Day.Monday;
             DatePickerStart.SelectedDate = DateTime.Now.AddDays(-7);
             DatePickerEnd.SelectedDate = DateTime.Now;
-            LoadLog();
+            //LoadLog();
         }
         protected void LoadLog()
         {

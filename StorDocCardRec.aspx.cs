@@ -165,8 +165,9 @@ namespace CardPerso
                     id_prb = getExcludeProductsCardsSelect();
                     if (stat.Length > 0) stat += " and ";
                     //stat += "datestart is not null and datediff(month,datestart,getdate())>=3";
-                    stat += "datestart is not null and datediff(day,datestart,getdate())>90";
-                    if(id_prb.Length>0) stat+=" and id_prb not in (" + id_prb + ")";
+                    //stat += "datestart is not null and datediff(day,datestart,getdate())>90"; //03.02.2021 поменял на 180 дней
+                    stat += "datestart is not null and datediff(day,datestart,getdate())>180";
+                    if (id_prb.Length>0) stat+=" and id_prb not in (" + id_prb + ")";
                 }
 
                 if (!IsPostBack)
@@ -174,7 +175,7 @@ namespace CardPerso
                     ZapCombo();
                     tbNumber.Focus();
                     //Refr();
-                    NotSend.Text = " (более 3-х месяцев)";
+                    NotSend.Text = " (более 6-х месяцев)";
                 }
                 
                 Session["StorDocCardRec"] = null;

@@ -257,6 +257,8 @@ namespace CardPerso
         {
             switch (typeDoc)
             {
+
+
                 case TypeDoc.ToBook124: return CardStatus.FilialBook124;
                 case TypeDoc.GetBook124: return CardStatus.Book124;
                 case TypeDoc.FromBook124: return CardStatus.Book124Filial;
@@ -277,6 +279,7 @@ namespace CardPerso
                 case TypeDoc.GetBook124: return CardStatus.FilialBook124;
                 case TypeDoc.FromBook124: return CardStatus.Book124;
                 case TypeDoc.ReceiveBook124: return CardStatus.Book124Filial;
+                case TypeDoc.ReceiveToFilialPacket: return CardStatus.CourierFilial;
                 case TypeDoc.ToGoz: return CardStatus.Filial;
                 case TypeDoc.GetGoz: return CardStatus.FilialGoz;
                 case TypeDoc.FromGoz: return CardStatus.Goz;
@@ -625,10 +628,13 @@ namespace CardPerso
                 //case TypeDoc.ReceiveToBank: typeop = 9; break;
                 //case TypeDoc.DeleteBrak: typeop = 11; break;
                 case TypeDoc.KillingCard: typeop = 11; break; // см выше, сперва 11 коду был сопоставлен Уничтожение ценностей в центре, 25.09.19 по просьбе Рустема стали сообщать в РМК об уничтожении карт в филиале и использовали тот же код
-                //case TypeDoc.ReceiveToFilialExpertiza: typeop = 12; break;
-                //case TypeDoc.SendToExpertiza: typeop = 13; break;                
+                case TypeDoc.ReceiveToFilialExpertiza: typeop = 12; break;
+                case TypeDoc.SendToExpertiza: typeop = 13; break;                
                 case TypeDoc.ToBook124: typeop = 14; break;
+                case TypeDoc.GetBook124: typeop = 1014; break; // 06.11.20 тысячные операции подразумевают спецсимвол * в посылке в РМК (письмо от 28.10.20)
+                case TypeDoc.FromBook124: typeop = 1015; break; // 06.11.20 тысячные операции подразумевают спецсимвол * в посылке в РМК (письмо от 28.10.20)
                 case TypeDoc.ReceiveBook124: typeop = 15; break;
+                
 
                 case TypeDoc.ToGoz: typeop = 21; break;
                 case TypeDoc.ReceiveGoz: typeop = 22; break;
@@ -664,6 +670,8 @@ namespace CardPerso
                 case TypeDoc.SendToClientFromPodotchet: indx = 1; break;
                 case TypeDoc.ReturnFromPodotchet: indx = 1; break;
                 case TypeDoc.ToBook124: indx = 1; break;
+                case TypeDoc.GetBook124: indx = 1; break;
+                case TypeDoc.FromBook124: indx = 1; break;
                 case TypeDoc.ReceiveBook124: indx = 1; break;
                 case TypeDoc.ToGoz: indx = 1; break;
                 case TypeDoc.ReceiveGoz: indx = 1; break;

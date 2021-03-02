@@ -203,6 +203,13 @@ namespace CardPerso
                 if (sc.UserAction(User.Identity.Name, Restrictions.Filial))
                     dListDoc.Items.Add(new ListItem("Отчет приходов-расходов бригадира ГОЗ", "49"));
 
+                if (sc.UserAction(User.Identity.Name, Restrictions.GetGoz) &&
+                    sc.UserAction(User.Identity.Name, Restrictions.FromGoz))
+                {
+                    dListDoc.Items.Clear();
+                    dListDoc.Items.Add(new ListItem("Отчет приходов-расходов бригадира ГОЗ", "49"));
+                }
+
 
                 DatePickerStart.FirstDayOfWeek = DatePicker.Day.Monday;
                 DatePickerEnd.FirstDayOfWeek = DatePicker.Day.Monday;
@@ -2760,6 +2767,7 @@ namespace CardPerso
                                         comm.Parameters.Add("@br", SqlDbType.Int).Value = current_branch;
                                         comm.Parameters.Add("@dt", SqlDbType.Date).Value = DatePickerOne.SelectedDate;
                                         SqlDataReader dr = comm.ExecuteReader();
+                                        int mc0 = 0, vis0 = 0, mir0 = 0, pin0 = 0;
                                         int mc = 0, vis = 0, mir = 0, pin = 0;
                                         while (dr.Read())
                                         {
@@ -2767,17 +2775,17 @@ namespace CardPerso
                                             BaseProductType tp = BranchStore.codeFromTypeAndProdName(Convert.ToInt32(dr["id_type"]), Convert.ToString(dr["prod_name"]));
                                             switch (tp)
                                             {
-                                                case BaseProductType.MasterCard: mc += cnt; break;
-                                                case BaseProductType.VisaCard: vis += cnt; break;
-                                                case BaseProductType.MirCard: mir += cnt; break;
-                                                case BaseProductType.PinConvert: pin += cnt; break;
+                                                case BaseProductType.MasterCard: mc0 += cnt; break;
+                                                case BaseProductType.VisaCard: vis0 += cnt; break;
+                                                case BaseProductType.MirCard: mir0 += cnt; break;
+                                                case BaseProductType.PinConvert: pin0 += cnt; break;
                                             }
                                         }
                                         dr.Close();
-                                        ep.SetText(13, 3, mc.ToString());
-                                        ep.SetText(13, 4, vis.ToString());
-                                        ep.SetText(13, 5, mir.ToString());
-                                        ep.SetText(13, 6, pin.ToString());
+                                        ep.SetText(13, 3, mc0.ToString());
+                                        ep.SetText(13, 4, vis0.ToString());
+                                        ep.SetText(13, 5, mir0.ToString());
+                                        ep.SetText(13, 6, pin0.ToString());
                                         #endregion
                                         #region выдача карт через сервис
                                         comm.Parameters.Clear();
@@ -2861,6 +2869,10 @@ namespace CardPerso
                                             ep.SetText(13 + index + 1, 5, mir.ToString());
                                             ep.SetText(13 + index + 1, 6, pin.ToString());
                                             ep.ShowRows(13, 13 + index + 1);
+                                            mc0 -= mc;
+                                            vis0 -= vis;
+                                            mir0 -= mir;
+                                            pin0 -= pin;
                                         }
                                         #endregion
                                         #region обычная выдача
@@ -2932,10 +2944,15 @@ namespace CardPerso
                                             ep.SetText(13 + index + 1, 5, mir.ToString());
                                             ep.SetText(13 + index + 1, 6, pin.ToString());
                                             ep.ShowRows(13, 13 + index + 1);
+                                            mc0 -= mc;
+                                            vis0 -= vis;
+                                            mir0 -= mir;
+                                            pin0 -= pin;
                                         }
 
                                         #endregion
                                         #region остатки на конец дня, сданные карты
+                                        //28.02.21 - остатки теперь считаем, а не берем из сданных карт
                                         comm.Parameters.Clear();
                                         comm.CommandText =
                                             $"select c.pan, c.fio, c.company, c.isPin, p.name from Cards c " +
@@ -2981,10 +2998,10 @@ namespace CardPerso
                                         ep.SetRangeBottom(10 + row + 2, 4, 10 + row + 1, 4);
                                         ep.SetText(10 + row + 3, 4, "Подпись");
                                         ep.SetWorkSheet(1);
-                                        ep.SetText(81, 3, mc.ToString());
-                                        ep.SetText(81, 4, vis.ToString());
-                                        ep.SetText(81, 5, mir.ToString());
-                                        ep.SetText(81, 6, pin.ToString());
+                                        ep.SetText(81, 3, mc0.ToString());
+                                        ep.SetText(81, 4, vis0.ToString());
+                                        ep.SetText(81, 5, mir0.ToString());
+                                        ep.SetText(81, 6, pin0.ToString());
                                         #endregion
                                     }
                                     ep.SetWorkSheet(1);
@@ -3008,6 +3025,7 @@ namespace CardPerso
                         #region ведомость подотчетников
                         if (id_type == 47)
                         {
+                            //26.02.21 все запросы стали делать только по текущему отделению
                             DateTime date_start = DateTime.ParseExact(DatePickerStart.DatePickerText, "dd.MM.yyyy", null);
                             DateTime date_end = DateTime.ParseExact(DatePickerEnd.DatePickerText, "dd.MM.yyyy", null);
 
@@ -3026,7 +3044,8 @@ namespace CardPerso
                                 comm.CommandText = $@"select c.pan, c.fio, c.company, p.name, c.isPin from cards c 
                                                         left join Products_Banks bp on c.id_prb = bp.id
                                                         left join Products p on bp.id_prod = p.id
-                                                        where id_stat = {(int)CardStatus.Accountable} and id_person = {personid}";
+                                                        where id_stat = {(int)CardStatus.Accountable} and id_person = {personid}
+                                                        and (id_branchCard = {current_branch} or id_branchCard in (select id from Branchs where id_parent={current_branch}))";
                                 ep.SetWorkSheet(2);
                                 int row = 0;
                                 using (SqlDataReader dr = comm.ExecuteReader())
@@ -3062,7 +3081,8 @@ namespace CardPerso
                                 #endregion
                                 #region начинаем откатываться назад считаем сколько карт получили и сколько отдали
                                 int reestr_row = 0;
-                                //выданные карты
+                                DateTime index_date = DateTime.Now.Date;
+                                //выданные карты через сервис
                                 comm.CommandText =
                                     $@"select c.pan, c.fio, c.company, p.name, c.isPin from storagedocs sd
                                                         left join Cards_StorageDocs cs on cs.id_doc = sd.id
@@ -3070,10 +3090,24 @@ namespace CardPerso
                                                         left join Products_Banks pb on c.id_prb=pb.id
                                                         left join Products p on pb.id_prod=p.id
                                                         where sd.type = {(int) TypeDoc.SendToClientService} and sd.priz_gen = 1 
+                                                        and (sd.id_branch = {current_branch} or sd.id_branch in (select id from Branchs where id_parent={current_branch}))
                                                         and invoice_courier like '{(int) CardStatus.Accountable},%' and c.id_person = {personid}
                                                         and date_doc=@dt";
                                 comm.Parameters.Add("@dt", SqlDbType.Date);
-                                DateTime index_date = DateTime.Now.Date;
+                                //выданные карты через кардперсо
+                                SqlCommand sel_cp = conn.CreateCommand();
+                                sel_cp.CommandText =
+                                    $@"select c.pan, c.fio, c.company, p.name, c.isPin from storagedocs sd
+                                                        left join Cards_StorageDocs cs on cs.id_doc = sd.id
+                                                        left join Cards c on cs.id_card = c.id
+                                                        left join Products_Banks pb on c.id_prb=pb.id
+                                                        left join Products p on pb.id_prod=p.id
+                                                        left join AccountablePerson_StorageDocs a on sd.id = a.id_doc
+                                                        where sd.type = {(int)TypeDoc.SendToClientFromPodotchet} and sd.priz_gen = 1 
+                                                        and (sd.id_branch = {current_branch} or sd.id_branch in (select id from Branchs where id_parent={current_branch}))
+                                                        and a.id_person={personid}
+                                                        and date_doc=@dt";
+                                sel_cp.Parameters.Add("@dt", SqlDbType.Date);
                                 //отданные другим образом (вернулись в хранилище или в гоз
                                 SqlCommand sel_m = conn.CreateCommand();
                                 sel_m.CommandText = 
@@ -3084,6 +3118,7 @@ namespace CardPerso
                                                         left join Products_Banks pb on c.id_prb=pb.id
                                                         left join Products p on pb.id_prod=p.id
                                                         where (sd.type = {(int)TypeDoc.ReceiveFromPodotchet} or sd.type = {(int)TypeDoc.ToGozFromPodotchet})
+                                                        and (sd.id_branch = {current_branch} or sd.id_branch in (select id from Branchs where id_parent={current_branch}))
                                                         and sd.priz_gen = 1 and a.id_person = {personid}
                                                         and date_doc=@dt";
                                 sel_m.Parameters.Add("@dt", SqlDbType.Date);
@@ -3097,6 +3132,7 @@ namespace CardPerso
                                                         left join Products_Banks pb on c.id_prb=pb.id
                                                         left join Products p on pb.id_prod=p.id
                                                         where (sd.type = {(int)TypeDoc.SendToPodotchet} or sd.type = {(int)TypeDoc.FromGozToPodotchet})
+                                                        and (sd.id_branch = {current_branch} or sd.id_branch in (select id from Branchs where id_parent={current_branch}))
                                                         and sd.priz_gen = 1 and a.id_person = {personid}
                                                         and date_doc=@dt";
                                 sel_p.Parameters.Add("@dt", SqlDbType.Date);
@@ -3108,6 +3144,7 @@ namespace CardPerso
                                     int mcp = 0, visp = 0, mirp = 0, pinp = 0;
                                     int mcm = 0, vism = 0, mirm = 0, pinm = 0;
                                     comm.Parameters["@dt"].Value = index_date;
+                                    sel_cp.Parameters["@dt"].Value = index_date;
                                     sel_p.Parameters["@dt"].Value = index_date;
                                     sel_m.Parameters["@dt"].Value = index_date;
                                     using (SqlDataReader dr = comm.ExecuteReader())
@@ -3143,10 +3180,43 @@ namespace CardPerso
                                                 reestr_row++;
                                             }
                                         }
-
                                         dr.Close();
                                     }
+                                    using (SqlDataReader dr = sel_cp.ExecuteReader())
+                                    {
+                                        while (dr.Read())
+                                        {
+                                            BaseProductType tp =
+                                                BranchStore.codeFromTypeAndProdName(1, Convert.ToString(dr["name"]));
+                                            switch (tp)
+                                            {
+                                                case BaseProductType.MasterCard:
+                                                    mcm++;
+                                                    break;
+                                                case BaseProductType.VisaCard:
+                                                    vism++;
+                                                    break;
+                                                case BaseProductType.MirCard:
+                                                    mirm++;
+                                                    break;
+                                            }
 
+                                            if (Convert.ToBoolean(dr["isPin"]))
+                                                pinm++;
+                                            if (index_date <= date_end)
+                                            {
+                                                //идем на реестр выданных
+                                                ep.SetWorkSheet(3);
+                                                ep.SetText(10 + reestr_row, 1, $"{reestr_row + 1}");
+                                                ep.SetText(10 + reestr_row, 2, dr["fio"]?.ToString());
+                                                ep.SetText(10 + reestr_row, 3, dr["pan"]?.ToString());
+                                                ep.SetText(10 + reestr_row, 4, dr["company"]?.ToString());
+                                                ep.SetText(10 + reestr_row, 5, $"{index_date:dd.MM.yyyy}");
+                                                reestr_row++;
+                                            }
+                                        }
+                                        dr.Close();
+                                    }
                                     using (SqlDataReader dr = sel_m.ExecuteReader())
                                     {
                                         while (dr.Read())
@@ -3707,7 +3777,7 @@ namespace CardPerso
                                                                 left join Cards c on cs.id_card = c.id
                                                                 left join Products_Banks pb on c.id_prb=pb.id
                                                                 left join Products p on pb.id_prod=p.id
-                                                                where (sd.type = {(int)TypeDoc.ToGoz} or sd.type = {(int)TypeDoc.ToGozFromPodotchet})
+                                                                where (sd.type = {(int)TypeDoc.GetGoz} or sd.type = {(int)TypeDoc.ToGozFromPodotchet})
                                                                 and sd.priz_gen = 1 and sd.id_branch = {current_branch}
                                                                 and date_doc=@dt";
                                 sel_p.Parameters.Add("@dt", SqlDbType.Date);

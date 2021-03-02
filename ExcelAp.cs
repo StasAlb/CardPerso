@@ -232,6 +232,33 @@ namespace CardPerso
             erng = (Excel.Range)(ewsh.Cells[row, col]);
             erng.NumberFormat = fmt;
         }
+
+        public void CopyRangeFormat(int source_row1, int source_col1, int source_row2, int source_col2,
+            int destination_row1, int destination_col1, int destination_row2, int destination_col2)
+        {
+            ewsh.Range[ewsh.Cells[source_row1, source_col1], ewsh.Cells[source_row2, source_col2]].Copy();
+            ewsh.Range[ewsh.Cells[destination_row1, destination_col1], ewsh.Cells[destination_row2, destination_col2]]
+                .PasteSpecial(Excel.XlPasteType.xlPasteFormats);
+        }
+
+        public void MoveRange(int source_row1, int source_col1, int source_row2, int source_col2,
+            int destination_row1, int destination_col1, int destination_row2, int destination_col2)
+        {
+            ewsh.Range[ewsh.Cells[source_row1, source_col1], ewsh.Cells[source_row2, source_col2]].Copy();
+            
+            ewsh.Range[ewsh.Cells[destination_row1, destination_col1], ewsh.Cells[destination_row2, destination_col2]]
+                .PasteSpecial(Excel.XlPasteType.xlPasteFormats);
+
+            ewsh.Range[ewsh.Cells[destination_row1, destination_col1], ewsh.Cells[destination_row2, destination_col2]]
+                    .Value2 =
+                ewsh.Range[ewsh.Cells[source_row1, source_col1], ewsh.Cells[source_row2, source_col2]].Value2;
+
+            ewsh.Range[ewsh.Cells[source_row1, source_col1], ewsh.Cells[source_row2, source_col2]].ClearFormats();
+        }
+        public void SetRangeData(int row1, int col1, int row2, int col2, object[,] dt)
+        {
+            ewsh.Range[ewsh.Cells[row1, col1], ewsh.Cells[row2, col2]].Value2 = dt;
+        }
         public void SetRangeAutoFit(int row1, int col1, int row2, int col2)
         {
             ewsh.Range[ewsh.Cells[row1, col1], ewsh.Cells[row2, col2]].Columns.AutoFit();
@@ -383,8 +410,16 @@ namespace CardPerso
                     SetText(1, cnt_col + 1, gv.Columns[i].HeaderText);
                     cnt_col++;
                 }
+                TemplateField tf = gv.Columns[i] as TemplateField;
+                if (tf != null && tf.SortExpression == "fio")
+                {
+                    SetText(1, cnt_col + 1, gv.Columns[i].HeaderText);
+                    cnt_col++;
+                }
             }
             SetFormat(1, 1, dt.Rows.Count + 1, cnt_col, "@");
+            object[,] list = new object[dt.Rows.Count, gv.Columns.Count];
+
             for (int j = 0; j < dt.Rows.Count; j++)
             {
                 int t = 0;
@@ -393,14 +428,26 @@ namespace CardPerso
                     BoundField bf = gv.Columns[i] as BoundField;
                     if (bf != null && gv.Columns[i].Visible)
                     {
+
                         if (bf.DataFormatString.Length == 0)
-                            SetText(j + 2, t + 1, dt.Rows[j][bf.DataField].ToString().Replace("&nbsp;", ""));
-                        if (bf.DataFormatString == "{0:d}" && dt.Rows[j][bf.DataField] != DBNull.Value)
-                            SetText(j + 2, t + 1, String.Format("{0:dd.MM.yyyy}", Convert.ToDateTime(dt.Rows[j][bf.DataField])));
+                            list[j, t] = dt.Rows[j][bf.DataField].ToString().Replace("&nbsp;", "");
+                              //SetText(j + 2, t + 1, dt.Rows[j][bf.DataField].ToString().Replace("&nbsp;", ""));
+                    if (bf.DataFormatString == "{0:d}" && dt.Rows[j][bf.DataField] != DBNull.Value)
+                        list[j, t] = String.Format("{0:dd.MM.yyyy}", Convert.ToDateTime(dt.Rows[j][bf.DataField]));
+                    //            SetText(j + 2, t + 1, String.Format("{0:dd.MM.yyyy}", Convert.ToDateTime(dt.Rows[j][bf.DataField])));
+                           t++;
+                    }
+                    TemplateField tf = gv.Columns[i] as TemplateField;
+                    if (tf != null && tf.SortExpression == "fio")
+                    {
+                      //  SetText(j+2, t+1, dt.Rows[j]["fio"].ToString());
+                      list[j, t] = dt.Rows[j]["fio"].ToString();
                         t++;
                     }
+
                 }
             }
+            SetRangeData(2, 1, dt.Rows.Count+1, cnt_col, list);
 
             SetRangeAutoFit(1, 1, dt.Rows.Count + 1, cnt_col);
             SetRangeBold(1, 1, 1, cnt_col);
@@ -429,9 +476,33 @@ namespace CardPerso
             resp.BufferOutput = true;
             resp.WriteFile(f.FullName);
             //resp.End();
-
             return true;
         }
+        public bool ReturnXlsBytes(System.Web.HttpResponse resp, byte[] data, string fileName)
+        {
+            resp.ClearHeaders();
+            resp.ClearContent();
+
+            DialogUtils.SetCookieResponse(resp);
+
+            resp.HeaderEncoding = System.Text.Encoding.Default;
+            resp.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
+            resp.AddHeader("Content-Length", data.Length.ToString());
+            resp.ContentType = "application/octet-stream";
+            resp.Cache.SetCacheability(HttpCacheability.NoCache);
+            /*
+            resp.BufferOutput = false;
+            resp.WriteFile(f.FullName);
+            resp.Flush();
+            resp.End();
+            */
+
+            resp.BufferOutput = true;
+            resp.BinaryWrite(data);
+            //resp.End();
+            return true;
+        }
+
         public void SetWorkSheetName(int cur, string s)
         {
             s = s.Replace(".", " ");

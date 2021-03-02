@@ -61,7 +61,12 @@ namespace OstCard.CardPerso
                 Response.Write($"bin: {sms.Bin}, code: {sms.Code}, name: {sms.ShortName}, flag: {sms.AllCards}<BR> ");
             }
             */
-
+            /*
+            RabbitMQSection rabbit = (RabbitMQSection) ConfigurationManager.GetSection("rabbitmq");
+            Response.Write($"{rabbit.rEndpoint.RabbitAddress} {rabbit.rEndpoint.RabbitHost}<BR>");
+            Response.Write($"{rabbit.rCredential.RabbitLogin} {rabbit.rCredential.RabbitPassword}<BR>");
+            Response.Write($"{rabbit.rChannel.RabbitExchange} {rabbit.rChannel.RabbitQueue} {rabbit.rChannel.RabbitRoutingKey}<BR>");
+            */
             OstCard.Data.Database.Connect(ConfigurationManager.ConnectionStrings["ConString"].ConnectionString);
             OstCard.Data.Database2.Connect(ConfigurationManager.ConnectionStrings["ConString"].ConnectionString);
 

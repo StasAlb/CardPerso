@@ -3,6 +3,7 @@
   <configSections>
     <section name="movingstock" type="CardPerso.MovingStockSection, CardPerso"/>
     <section name="sms_info" type="CardPerso.SmsInfoSection, CardPerso"/>
+    <section name="rabbitmq" type="CardPerso.RabbitMQSection, CardPerso"/>
   </configSections>
   <movingstock>
     <fields>
@@ -148,6 +149,11 @@
      </products>     	
 	
   </sms_info>
+  <rabbitmq enabled="true">
+    <endpoint address="127.0.0.1" host="/" />
+    <credential login="guest" password="guest"/>
+    <channel exchange="CardPersoExcange" queue="CardPersoQueue" routingkey="cardperso"/>
+  </rabbitmq>
   <appSettings>
     <add key="DocPath" value="d:\Work\CardPerso\CardPerso\Attachments\"/>
     <add key="SortListH" value="20"/>
@@ -207,7 +213,7 @@
     <membership defaultProvider="MySqlProvider">
       <providers>
         <add name="MySqlProvider" type="System.Web.Security.SqlMembershipProvider" connectionStringName="ConString" requiresQuestionAndAnswer="false"
-          passwordStrengthRegularExpression="" minRequiredPasswordLength="3" minRequiredNonalphanumericCharacters="0" maxInvalidPasswordAttempts="3"
+          passwordStrengthRegularExpression="" minRequiredPasswordLength="3" minRequiredNonalphanumericCharacters="0" maxInvalidPasswordAttempts="4"
           applicationName="CardPerso" requiresUniqueEmail="false"/>
       </providers>
     </membership>
@@ -226,7 +232,7 @@
             ASP.NET to identify an incoming user. 
         -->
     <authentication mode="Forms">
-      <forms loginUrl="~/Account/Login.aspx" timeout="60"/>
+      <forms loginUrl="~/Account/Login.aspx" timeout="30"/>
     </authentication>
     <!--
             The <customErrors> section enables configuration 

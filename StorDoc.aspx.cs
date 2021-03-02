@@ -23,6 +23,8 @@ using CardPerso.Administration;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using RabbitMQ.Client;
+using System.Diagnostics;
 using Newtonsoft.Json.Serialization;
 using CardPerso;
 
@@ -60,6 +62,29 @@ namespace CardPerso
         [DataMember(Order = 3, Name = "branch")]
         public string branch;
     }
+
+    public class RabbitMessage
+    {
+        [DataMember(Order = 0, Name = "CardStatus")]
+        public string CardStatus;
+        [DataMember(Order = 1, Name = "Date")]
+        public DateTime CardDate;
+        [DataMember(Order = 2, Name = "FioEmployee")]
+        public string Fio;
+        [DataMember(Order = 3, Name = "Cards")]
+        public List<RabbitMQCard> cards = new List<RabbitMQCard>();
+    }
+
+    [DataContract]
+    public class RabbitMQCard
+    {
+        [DataMember(Order = 0, Name = "CardId")]
+        public string CardIdOw;
+        [DataMember(Order = 1, Name = "BranchCode")]
+        public string Branch;
+        [DataMember(Order = 2, Name = "DeliverCode")]
+        public string BranchDeliver;
+    }
     public partial class StorDoc : System.Web.UI.Page
     {
         private string res="";
@@ -68,6 +93,7 @@ namespace CardPerso
 //        private DataSet ds = new DataSet();
         ServiceClass sc = new ServiceClass();
         SqlConnection conn = null;
+        object lockExcelSave = new object();  
 //        object FuncClass.LockObject = new object();
         object lockObjectLog = new object();
 
@@ -3086,6 +3112,13 @@ namespace CardPerso
                                         bs.getBaseProductsFromDocs(id_doc, conn);
                                         int indx = BranchStore.TypeDocToIndexBranchStore((TypeDoc) id_type);
                                         RMKRequestData rqd = new RMKRequestData();
+                                        rqd.branchCode = depname;
+                                        string[] branchSecond = depname.Split('-', '/', ':');
+                                        if (branchSecond.Length > 1)
+                                        {
+                                            rqd.branchCode = branchSecond[0];
+                                            rqd.secondaryStorage = branchSecond[1];
+                                        }
                                         //rqd.operationType = BranchStore.TypeDocToRMKOperation((TypeDoc) id_type).ToString();
                                         rqd.operationType = rmkoper.ToString();
                                         if (dt != DateTime.MinValue) rqd.operDate = dt;
@@ -3094,7 +3127,7 @@ namespace CardPerso
                                         rqd.userNumber = sc.PassportNumber(userPassport);
                                         rqd.packetId = number_doc.ToString();
                                         rqd.operationId = "";
-                                        rqd.branchCode = depname;
+                                        
                                         if (id_type == (int) TypeDoc.SendToPodotchet)
                                         {
                                             CommonDataBase cdb = new CommonDataBase(null);
@@ -3176,15 +3209,33 @@ namespace CardPerso
                                         if (id_type == (int)TypeDoc.ReceiveBook124)
                                         {
                                             // 25.11.2019 меняем местами того кто принял документ и подотчетное лицо, потому что РМК захотел, чтобы как будто операция шла от имени того, кто сдает карты по 124 книге
-                                            rqd.accountableSeries = rqd.userSeries;
-                                            rqd.accountableNumber = rqd.userNumber;
+                                            // 11.11.2010 делаем креатора того кто принимает, аккаунтом - того кто возвращал
+                                            //rqd.accountableSeries = rqd.userSeries;
+                                            //rqd.accountableNumber = rqd.userNumber;
                                             ExecuteScalar($"select username from aspnet_users where id=(select user_id from storagedocs where id=(select id_act from storagedocs where id={id_doc}))", ref obj, null);
                                             string passport = sc.UserPassport((string)obj);
-                                            rqd.userSeries = sc.PassportSeries(passport);
-                                            rqd.userNumber = sc.PassportNumber(passport);
-                                            //rqd.accountableSeries = sc.PassportSeries(passport);
-                                            //rqd.accountableNumber = sc.PassportNumber(passport);
+                                            //rqd.userSeries = sc.PassportSeries(passport);
+                                            //rqd.userNumber = sc.PassportNumber(passport);
+                                            rqd.accountableSeries = sc.PassportSeries(passport);
+                                            rqd.accountableNumber = sc.PassportNumber(passport);
                                         }
+                                        if (id_type == (int) TypeDoc.GetBook124)
+                                        {
+                                            ExecuteScalar($"select username from aspnet_users where id=(select user_id from storagedocs where id=(select id_act from storagedocs where id={id_doc}))", ref obj, null);
+                                            string passport = sc.UserPassport((string)obj);
+                                            //rqd.userSeries = sc.PassportSeries(passport);
+                                            //rqd.userNumber = sc.PassportNumber(passport);
+                                            rqd.accountableSeries = sc.PassportSeries(passport);
+                                            rqd.accountableNumber = sc.PassportNumber(passport);
+                                        }
+                                        if (id_type == (int)TypeDoc.FromBook124)
+                                        {
+                                            ExecuteScalar($"select username from storagedocs inner join aspnet_users on StorageDocs.id_act=aspnet_users.id where storagedocs.id={id_doc}", ref obj, null);
+                                            string passport = sc.UserPassport((string)obj);
+                                            rqd.accountableSeries = sc.PassportSeries(passport);
+                                            rqd.accountableNumber = sc.PassportNumber(passport);
+                                        }
+
                                         if (id_type == (int)TypeDoc.ReceiveGoz)
                                         {
                                             // 25.11.2019 меняем местами того кто принял документ и подотчетное лицо, потому что РМК захотел, чтобы как будто операция шла от имени того, кто сдает карты по 124 книге
@@ -3260,7 +3311,8 @@ namespace CardPerso
 
                         #endregion
 
-                        #region кладем файл курьерской службы для персонализации и отправки в филиал
+                        #region кладем файл курьерской службы для персонализации и отправки в филиал (29.01.2021 - отключили)
+                        /*
                         try
                         {
                             //поскольку это делается не для всех филиалов, то проверяем еще и на кол-во карт в документе
@@ -3301,7 +3353,7 @@ namespace CardPerso
                             WebLog.LogClass.WriteToLog(exp.ToString());
                             lbInform.Text = "Ошибка создания реестра курьерской службы";
                             return;
-                        }
+                        }*/
                         #endregion
 
                         if (sost == 0 && id_type == (int)TypeDoc.PersoCard)
@@ -3320,7 +3372,6 @@ namespace CardPerso
                                 if (!excludesString.Contains(SingleQuery.BranchName(current_branch_id)))
                                 {
                                     #region сервис информирования по sms ozeki
-
                                     try
                                     {
                                         Ozeki O = new Ozeki(conn);
@@ -3460,6 +3511,38 @@ namespace CardPerso
                             lbInform.Text = erm.Message;
                             return;
                         }
+                        #region сообщаем о изменении статуса карт в rabbit
+                        Hashtable htRabbits = new Hashtable();
+                        //RabbitMessage rabbitMessage = new RabbitMessage();
+                        comm.Parameters.Clear();
+                        comm.CommandText = $"select c.CardIdOW, c.id_stat, b.ident_dep from Cards_StorageDocs csd left join Cards c on csd.id_card = c.id left join Branchs b on c.id_branchCard = b.id where csd.id_doc = {id_doc}";
+                        using (SqlDataReader dr = comm.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                string st = Convert.ToInt32(dr["id_stat"]).ToString();
+                                if (!htRabbits.ContainsKey(st))
+                                {
+                                    htRabbits.Add(st, new RabbitMessage() {CardStatus = st, CardDate = DateTime.Now, Fio = User.Identity.Name});
+                                }
+                                ((RabbitMessage)(htRabbits[st])).cards.Add(new RabbitMQCard()
+                                {
+                                    CardIdOw = dr["CardIdOw"].ToString(),
+                                    BranchDeliver = dr["ident_dep"].ToString(),
+                                    Branch = depname
+                                });
+
+                            }
+                            dr.Close();
+                        }
+
+                        foreach (DictionaryEntry de in htRabbits)
+                        {
+                            SendToRabbit((RabbitMessage)de.Value);
+                        }
+
+                        //SendToRabbit(rabbitMessage);
+                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -3479,9 +3562,10 @@ namespace CardPerso
                         sost = Convert.ToInt32(ds1.Tables[0].Rows[i]["priz_gen"]);
                         if (Convert.ToInt32(ds1.Tables[0].Rows[i]["priz_gen"]) == 0)
                             gen = 1;
-                    documentJson.Clear();
-                    if (!CheckProducts(id_doc, id_type, sost)) return;
-                    #region кладем файл курьерской службы для персонализации и отправки в филиал
+                        documentJson.Clear();
+                        if (!CheckProducts(id_doc, id_type, sost)) return;
+                        #region кладем файл курьерской службы для персонализации и отправки в филиал (29.01.2021 - отменили
+                    /*
                     try
                     {
                         number_doc = Convert.ToInt32(ds1.Tables[0].Rows[i]["number_doc"]);
@@ -3522,7 +3606,7 @@ namespace CardPerso
                         WebLog.LogClass.WriteToLog(exp.ToString());
                         lbInform.Text = "Ошибка создания реестра курьерской службы";
                         return;
-                    }
+                    }*/
                     #endregion
                     }
 
@@ -3540,6 +3624,29 @@ namespace CardPerso
                                 gen = 1;
                             UpdateStorage(id_doc, id_type, sost, dt, trans);
                             ChangeGen(id_doc, gen, dt, trans);
+                            #region сообщаем о изменении статуса карт в rabbit
+                            RabbitMessage rabbitMessage = new RabbitMessage();
+                            comm.Parameters.Clear();
+                            comm.CommandText = $"select c.CardIdOW, c.id_stat, b.ident_dep from Cards_StorageDocs csd left join Cards c on csd.id_card = c.id left join Branchs b on c.id_branchCard = b.id where csd.id_doc = {id_doc}";
+                            using (SqlDataReader dr = comm.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    rabbitMessage.cards.Add(new RabbitMQCard()
+                                    {
+                                        CardIdOw = dr["CardIdOw"].ToString(),
+                                        BranchDeliver = dr["ident_dep"].ToString(),
+                                        Branch = depname
+                                    });
+                                    rabbitMessage.CardStatus = Convert.ToInt32(dr["id_stat"]).ToString();
+                                }
+                                dr.Close();
+                            }
+                            rabbitMessage.CardDate = DateTime.Now;
+                            rabbitMessage.Fio = User.Identity.Name;
+                            SendToRabbit(rabbitMessage);
+                            #endregion
+
                         }
                         trans.Commit();
                         lbInform.Text = "";
@@ -4178,6 +4285,7 @@ namespace CardPerso
                 string doc = "Empty.xls";
                 int id_deliv = 0;
                 userToFilialFilial="";
+                byte[] docBytes = null;
 
                 if (gvDocs.Rows.Count > 0)
                     id_deliv = Convert.ToInt32(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["id_deliv"]);
@@ -4239,7 +4347,7 @@ namespace CardPerso
                 if (id_type == (int)TypeDoc.FromWrapping) doc = "Attachment22.xls";
                 if (id_type == (int)TypeDoc.SendToExpertiza) doc = "Attachment6_8.xls";
                 if (id_type == (int)TypeDoc.ReceiveToExpertiza) doc = "Attachment6_8.xls";
-                if (id_type == (int)TypeDoc.SendToPodotchet) doc = "Attachment16.xls";
+                if (id_type == (int)TypeDoc.SendToPodotchet) doc = "Attachment_AccAct.xls";
                 if (id_type == (int)TypeDoc.ReceiveToPodotchet) doc = "Attachment16.xls";
                 if (id_type == (int)TypeDoc.ReceiveFromPodotchet) doc = "Attachment16.xls";
                 if (id_type == (int)TypeDoc.ReturnFromPodotchet) doc = "Attachment16.xls";
@@ -4254,6 +4362,8 @@ namespace CardPerso
                     doc = "Attachment16.xls";
                 if (id_type == (int) TypeFormDoc.Book124Label)
                     doc = "Attachment124_Label.xls";
+                if (id_type == (int) TypeDoc.KillingCard)
+                    doc = "Attachment_Shred.xls";
 
 
                 // 01.11.18 для всех документов экспертизы и подотчетных делаем акт+реестр
@@ -4294,17 +4404,25 @@ namespace CardPerso
 
                     if (doc.Length > 0 && WebConfigurationManager.AppSettings["DocPath"] != null)
                     {
-                        doc = String.Format("{0}Temp\\{1}", WebConfigurationManager.AppSettings["DocPath"], doc);
-                        ep.SaveAsDoc(doc, false);
-                        docTempName = doc;
+                        lock (lockExcelSave)
+                        {
+                            docTempName = doc;
+                            doc = String.Format("{0}Temp\\{1}", WebConfigurationManager.AppSettings["DocPath"], doc);
+                            ep.SaveAsDoc(doc, false);
+                            ep.Close();
+                            GC.Collect();
+                            docBytes = File.ReadAllBytes(doc);
+                        }
                     }
                 }
-                ep.Close();
+                ep?.Close();
                 //ep.Show();
                 GC.Collect();
                 System.Threading.Thread.CurrentThread.CurrentCulture = oldCI;
-                if (doc.Length > 0 && send)
-                    ep.ReturnXls(Response, doc);
+                //if (doc.Length > 0 && send)
+//                    ep.ReturnXls(Response, doc);
+                if (docBytes != null && send)
+                    ep.ReturnXlsBytes(Response, docBytes, docTempName);
             }
             catch (Exception ex)
             {
@@ -5912,9 +6030,79 @@ namespace CardPerso
                 ExcelReestrFilial(Convert.ToInt32(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["id"]), ep);
             }
             #endregion
+            #region в подотчет их хранилища
+            if (id_type == (int)TypeDoc.SendToPodotchet)
+            {
+                int id_doc = Convert.ToInt32(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["id"]);
+                DateTime dt = Convert.ToDateTime(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["date_doc"]);
+
+                ds.Clear();
+                SqlCommand comm = new SqlCommand();
+                comm.CommandText = "select id_prb, prod_name, bank_name, id_type from V_ProductsBanks_T order by id_sort";
+                res = (string)ExecuteCommand(comm, ref ds, null);
+                ArrayList al = new ArrayList();
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                    al.Add(new MyProd(Convert.ToInt32(dr["id_prb"]), dr["prod_name"].ToString(), dr["bank_name"].ToString(), Convert.ToInt32(dr["id_type"])));
+                ds.Clear();
+                comm.CommandText = "select id_prb, isPin from V_Cards_StorageDocs2 where id_doc=@id";
+                comm.Parameters.Add("@id", SqlDbType.Int).Value = id_doc;
+                ExecuteCommand(comm, ref ds, null);
+                if (ds == null || ds.Tables.Count == 0)
+                    return;
+                int pin = 0, card = 0;
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    if (dr["id_prb"] == DBNull.Value)
+                        continue;
+                    if (Convert.ToBoolean(dr["isPin"]))
+                        pin++;
+                    foreach (MyProd mp in al)
+                    {
+                        if (mp.ID == Convert.ToInt32(dr["id_prb"]))
+                        {
+                            mp.cnts[0]++;
+                            card++;
+                            break;
+                        }
+                    }
+                }
+                int i = 0;
+                foreach (MyProd mp in al)
+                {
+                    if (mp.cnts[0] != 0)
+                    {
+                        ep.InsertRow(18 + i);
+                        ep.CopyRangeFormat(17, 1, 17, 10, 18+i, 1, 18+i, 10);
+                        ep.SetText(17 + i, 1, mp.Name);
+                        ep.SetText(17 + i, 6, mp.cnts[0].ToString());
+                        i++;
+                    }
+                }
+                ep.InsertRow(18 + i);
+                ep.CopyRangeFormat(17, 1, 17, 10, 18 + i, 1, 18 + i, 10);
+                ep.SetText(17 + i + 1, 1, "Всего");
+                ep.SetText(17 + i + 1, 6, card.ToString());
+                ep.SetWorkSheet(1);
+                ep.SetWorkSheetName(1, "a_" + gvDocs.DataKeys[gvDocs.SelectedIndex].Values["branch"].ToString());
+                ep.SetText("Pin", pin.ToString());
+                
+                ep.SetText_Name("Date1", $"Дата: {dt:dd.MM.yyyy}");
+                ep.SetText_Name("Date2", $"{dt:dd.MM.yyyy}");
+                ep.SetText_Name("UFio", String.Format("____________/ {0} /", sc.UserFIO(User.Identity.Name)));
+
+
+
+                object obj = null;
+                ExecuteScalar("select department from Branchs where id=" + sc.BranchId(User.Identity.Name), ref obj, null);
+                if (obj != null) ep.SetText("branch", obj.ToString());
+
+                ep.SetWorkSheet(2);
+                ep.SetWorkSheetName(2, "r_" + gvDocs.DataKeys[gvDocs.SelectedIndex].Values["branch"].ToString());
+                ExcelReestrFilial(Convert.ToInt32(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["id"]), ep);
+            }
+            #endregion
             #region подотчетные лица
-            if (id_type == (int)TypeDoc.SendToPodotchet
-                || id_type == (int)TypeDoc.ReceiveToPodotchet
+            if (id_type == (int)TypeDoc.ReceiveToPodotchet
                 || id_type == (int)TypeDoc.ReturnFromPodotchet
                 || id_type == (int)TypeDoc.ReceiveFromPodotchet
                 || id_type == (int)TypeDoc.FromGozToPodotchet || id_type == (int)TypeDoc.ToGozFromPodotchet
@@ -6120,6 +6308,136 @@ namespace CardPerso
                 ep.SetRangeBorders(11, 2, 11 + ds1.Tables[0].Rows.Count, 8);
             }
             #endregion
+            #region уничтожение карты в филиале
+            if (id_type == (int) TypeDoc.KillingCard)
+            {
+                int id_doc = Convert.ToInt32(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["id"]);
+                DateTime dt = Convert.ToDateTime(gvDocs.DataKeys[gvDocs.SelectedIndex].Values["date_doc"]);
+                ds.Clear();
+                BranchStore bs = new BranchStore(0, "", "");
+                res = ExecuteQuery(
+                                    $"select c.fio, c.pan, c.CardIdOW, c.company, b1.ident_dep as BranchInit, b2.ident_dep as BranchCard, c.isPin, p.prod_name from Cards c inner join Cards_StorageDocs s on s.id_card=c.id inner join V_ProductsBanks p on c.id_prb=p.id_prb inner join Branchs b1 on c.id_branchInit=b1.id inner join Branchs b2 on c.id_branchCard=b2.id where s.id_doc={id_doc}",
+                    ref ds, null);
+                object[,] list2 = new object[ds.Tables[0].Rows.Count, 8];
+                
+                Hashtable ht = new Hashtable();
+                int pin = 0;
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    string prodname = Convert.ToString(ds.Tables[0].Rows[i]["prod_name"]);
+                    if (ht.ContainsKey(prodname))
+                        ht[prodname] = ((int) ht[prodname]) + 1;
+                    else
+                        ht.Add(prodname, 1);
+                    list2[i, 0] = (i + 1).ToString();
+                    list2[i, 1] = Convert.ToString(ds.Tables[0].Rows[i]["fio"]);
+                    list2[i, 2] = Convert.ToString(ds.Tables[0].Rows[i]["pan"]);
+                    list2[i, 3] = Convert.ToString(ds.Tables[0].Rows[i]["CardIdOW"]);
+                    list2[i, 4] = Convert.ToString(ds.Tables[0].Rows[i]["company"]);
+                    list2[i, 5] = Convert.ToString(ds.Tables[0].Rows[i]["BranchInit"]);
+                    list2[i, 6] = Convert.ToString(ds.Tables[0].Rows[i]["BranchCard"]);
+                    if (Convert.ToInt32(ds.Tables[0].Rows[i]["isPin"]) == 1)
+                    {
+                        list2[i, 7] = "*";
+                        pin++;
+                    }
+                    else
+                        list2[i, 7] = "";
+                }
+                ep.SetWorkSheet(1);
+                int row = 0, n = 0, sum = 0;
+                object[,] list1 = new object[ht.Count + 4, 6];
+                n = 1;
+                sum = 0;
+                foreach (DictionaryEntry de in ht)
+                {
+                    if (BranchStore.codeFromTypeAndProdName(1, (string) de.Key) == BaseProductType.MasterCard)
+                    {
+                        list1[row, 0] = n++;
+                        list1[row, 1] = (string)de.Key;
+                        list1[row, 4] = $"{(int)de.Value}";
+                        row++;
+                        sum += (int) de.Value;
+                    }
+                }
+                if (sum > 0)
+                {
+                    list1[row, 1] = "MasterCard (Итого):";
+                    list1[row, 4] = $"{sum}";
+                    row++;
+                }
+                n = 1;
+                sum = 0;
+                foreach (DictionaryEntry de in ht)
+                {
+                    if (BranchStore.codeFromTypeAndProdName(1, (string)de.Key) == BaseProductType.VisaCard)
+                    {
+                        list1[row, 0] = n++;
+                        list1[row, 1] = (string)de.Key;
+                        list1[row, 4] = $"{(int)de.Value}";
+                        row++;
+                        sum += (int)de.Value;
+                    }
+                }
+                if (sum > 0)
+                {
+                    list1[row, 1] = "Visa (Итого):";
+                    list1[row, 4] = $"{sum}";
+                    row++;
+                }
+                n = 1;
+                sum = 0;
+                foreach (DictionaryEntry de in ht)
+                {
+                    if (BranchStore.codeFromTypeAndProdName(1, (string)de.Key) == BaseProductType.MirCard)
+                    {
+                        list1[row, 0] = n++;
+                        list1[row, 1] = (string)de.Key;
+                        list1[row, 4] = $"{(int)de.Value}";
+                        row++;
+                        sum += (int)de.Value;
+                    }
+                }
+                if (sum > 0)
+                {
+                    list1[row, 1] = "Мир (Итого):";
+                    list1[row, 4] = $"{sum}";
+                    row++;
+                }
+
+                n = 1;
+                sum = 0;
+                foreach (DictionaryEntry de in ht)
+                {
+                    if (BranchStore.codeFromTypeAndProdName(1, (string)de.Key) == BaseProductType.NFCCard)
+                    {
+                        list1[row, 0] = n++;
+                        list1[row, 1] = (string)de.Key;
+                        list1[row, 5] = $"{(int)de.Value}";
+                        row++;
+                        sum += (int)de.Value;
+                    }
+                }
+                if (sum > 0)
+                {
+                    list1[row, 1] = "NFC карты (Итого):";
+                    list1[row, 5] = $"{sum}";
+                    row++;
+                }
+
+                for (int i = 0; i < row; i++)
+                    ep.InsertRow(15, true);
+                ep.SetRangeData(15, 2, 15 + row, 6, list1);
+                ep.SetText("date_doc", dt.ToString("dd.MM.yyyy"));
+                ep.SetText("branch", gvDocs.DataKeys[gvDocs.SelectedIndex].Values["branch"].ToString());
+                ep.SetText("pin", pin.ToString());
+                ep.SetWorkSheet(2);
+                ep.SetRangeData(11, 2, 11+(list2.Length/8)-1, 9, list2);
+                ep.SetRangeBorders(11, 2, 11 + (list2.Length/8) - 1, 9);
+                ep.SetText("date2", dt.ToString("dd.MM.yyyy"));
+                ep.SetWorkSheet(1);
+            }
+            #endregion
         }
         private void ZapExcelUz(int id_type, ExcelAp ep)
         {
@@ -6186,8 +6504,8 @@ namespace CardPerso
             if (id_type == (int)TypeFormDoc.OfficeNote)
             {
                 ds.Clear();
+                //WebLog.LogClass.WriteToLog("List 1");
                 res = ExecuteQuery($"select prod_name, cnt_perso, cnt_brak, bank_name, id_type from V_Products_StorageDocs where id_doc={id_doc} order by bank_name, prod_name", ref ds, null);
-
                 ep.SetWorkSheet(1);
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {
@@ -6211,7 +6529,8 @@ namespace CardPerso
                 ep.SetText_Name("date1_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date1_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date1_2", $"{dt_doc:dd.MM.yyyy}");
-                ep.ShowRows(13, 13 + row);               
+                ep.ShowRows(13, 13 + row);
+                //WebLog.LogClass.WriteToLog("List 2");
                 ep.SetWorkSheet(2);
                 sum = 0;
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -6229,6 +6548,7 @@ namespace CardPerso
                 ep.SetText_Name("date2_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date2_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date2_2", $"{dt_doc:dd.MM.yyyy}");
+                //WebLog.LogClass.WriteToLog("List 3");
                 ep.SetWorkSheet(3);
                 row = 0;
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -6256,11 +6576,12 @@ namespace CardPerso
                     }
                     ep.SetText(13 + row, 9, (cnt > 0) ? cnt.ToString() : "");
                     row++;
-                }                
+                }
                 ep.SetText_Name("date3_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date3_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date3_2", $"{dt_doc:dd.MM.yyyy}");
                 ep.ShowRows(13, 13 + row);
+                //WebLog.LogClass.WriteToLog("List 4");
                 ep.SetWorkSheet(4);
                 sum = 0;
                 int sum1 = 0;
@@ -6286,6 +6607,7 @@ namespace CardPerso
                 ep.SetText_Name("date4_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date4_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date4_2", $"{dt_doc:dd.MM.yyyy}");
+                //WebLog.LogClass.WriteToLog("List 5");
                 ep.SetWorkSheet(5);
                 row = 0; sum = 0;
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -6311,6 +6633,7 @@ namespace CardPerso
                 ep.SetText_Name("date5_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date5_2", $"{dt_doc:dd.MM.yyyy}");
                 ep.ShowRows(13, 13 + row);
+                //WebLog.LogClass.WriteToLog("List 6");
                 ep.SetWorkSheet(6);
                 sum = 0;
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
@@ -6328,50 +6651,81 @@ namespace CardPerso
                 ep.SetText_Name("date6_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date6_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date6_2", $"{dt_doc:dd.MM.yyyy}");
+                //WebLog.LogClass.WriteToLog("List 7");
                 ep.SetWorkSheet(7);
                 ds.Clear();
                 res = ExecuteQuery($"select dbo.BranchBank(id_BranchCard) as bank, dbo.BranchMainDep(id_BranchCard) as mfo, dbo.BranchDep(id_BranchCard) as agent, dbo.Productname(id_prb) as product, count(*) as perso from V_Cards_StorageDocs where id_doc={id_doc} group by id_BranchCard, id_prb order by bank, mfo, agent, product", ref ds, null);
-                row = 0;
-                for (int i=0;i<ds.Tables[0].Rows.Count;i++)
-                {
-                    ep.SetText(8+row, 1, $"{i + 1}");
-                    ep.SetText(8+row, 2, $"{ds.Tables[0].Rows[i]["bank"]}");
-                    ep.SetText(8+row, 3, $"{ds.Tables[0].Rows[i]["mfo"]}");
-                    ep.SetText(8+row, 4, $"{ds.Tables[0].Rows[i]["agent"]}");
-                    ep.SetText(8+row, 5, $"{ds.Tables[0].Rows[i]["product"]}");
-                    ep.SetText(8+row, 6, $"{ds.Tables[0].Rows[i]["perso"]}");
-                    ep.SetText(8+row, 7, $"{ds.Tables[0].Rows[i]["perso"]}");
-                    row++;
-                }
-                ep.ShowRows(8, 8 + row);
+
+                //переносим подпись на нужные места
                 ep.SetText_Name("date7_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date7_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date7_2", $"{dt_doc:dd.MM.yyyy}");
+                ep.MoveRange(9, 1, 19, 10, 9 + ds.Tables[0].Rows.Count + 1, 1, 19 + ds.Tables[0].Rows.Count + 1, 10);
+
+                if (ds.Tables[0].Rows.Count > 1)
+                    ep.CopyRangeFormat(8, 1, 8, 10, 9, 1, 8 + ds.Tables[0].Rows.Count - 1, 10);
+                row = 0;
+                object[,] o7 = new object[ds.Tables[0].Rows.Count, 7];
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    //ep.SetText(8 + row, 1, $"{i + 1}");
+                    //ep.SetText(8 + row, 2, $"{ds.Tables[0].Rows[i]["bank"]}");
+                    //ep.SetText(8 + row, 3, $"{ds.Tables[0].Rows[i]["mfo"]}");
+                    //ep.SetText(8 + row, 4, $"{ds.Tables[0].Rows[i]["agent"]}");
+                    //ep.SetText(8 + row, 5, $"{ds.Tables[0].Rows[i]["product"]}");
+                    //ep.SetText(8 + row, 6, $"{ds.Tables[0].Rows[i]["perso"]}");
+                    //ep.SetText(8 + row, 7, $"{ds.Tables[0].Rows[i]["perso"]}");
+                    o7[i, 0] = $"{i + 1}";
+                    o7[i, 1] = ds.Tables[0].Rows[i]["bank"].ToString();
+                    o7[i, 2] = ds.Tables[0].Rows[i]["mfo"].ToString();
+                    o7[i, 3] = ds.Tables[0].Rows[i]["agent"].ToString();
+                    o7[i, 4] = ds.Tables[0].Rows[i]["product"].ToString();
+                    o7[i, 5] = ds.Tables[0].Rows[i]["perso"].ToString();
+                    o7[i, 6] = ds.Tables[0].Rows[i]["perso"].ToString();
+                    row++;
+                }
+                ep.SetRangeData(8, 1, 8 + row - 1, 7, o7);
+                //ep.ShowRows(8, 8 + row);
+                //WebLog.LogClass.WriteToLog("List 8");
                 ep.SetWorkSheet(8);
                 ds.Clear();
                 res = ExecuteQuery($"select dbo.BranchBank(id_BranchCard) as bank, dbo.BranchMainDep(id_BranchCard) as mfo, dbo.BranchDep(id_BranchCard) as agent, dbo.Productname(id_prb) as product, count(*) as perso from V_Cards_StorageDocs where id_doc={id_doc} group by id_BranchCard, id_prb order by bank, mfo, agent, product", ref ds, null);
-                row = 0;
-                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                {
-                    ep.SetText(8 + row, 1, $"{i + 1}");
-                    ep.SetText(8 + row, 2, $"{ds.Tables[0].Rows[i]["bank"]}");
-                    ep.SetText(8 + row, 3, $"{ds.Tables[0].Rows[i]["mfo"]}");
-                    ep.SetText(8 + row, 4, $"{ds.Tables[0].Rows[i]["agent"]}");
-                    ep.SetText(8 + row, 5, $"{ds.Tables[0].Rows[i]["product"]}");
-                    ep.SetText(8 + row, 6, $"{ds.Tables[0].Rows[i]["perso"]}");
-                    ep.SetText(8 + row, 7, $"{ds.Tables[0].Rows[i]["perso"]}");
-                    row++;
-                }
-                ep.ShowRows(8, 8 + row);
+                //переносим подпись на нужные места
                 ep.SetText_Name("date8_str", $"Дата {dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date8_1", $"{dt_doc:dd.MM.yyyy}");
                 ep.SetText_Name("date8_2", $"{dt_doc:dd.MM.yyyy}");
+                ep.MoveRange(9, 1, 19, 10, 9 + ds.Tables[0].Rows.Count + 1, 1, 19 + ds.Tables[0].Rows.Count + 1, 10);
 
+                if (ds.Tables[0].Rows.Count > 1)
+                    ep.CopyRangeFormat(8, 1, 8, 10, 9, 1, 8 + ds.Tables[0].Rows.Count - 1, 10);
+                row = 0;
+                object[,] o8 = new object[ds.Tables[0].Rows.Count, 7];
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    //ep.SetText(8 + row, 1, $"{i + 1}");
+                    //ep.SetText(8 + row, 2, $"{ds.Tables[0].Rows[i]["bank"]}");
+                    //ep.SetText(8 + row, 3, $"{ds.Tables[0].Rows[i]["mfo"]}");
+                    //ep.SetText(8 + row, 4, $"{ds.Tables[0].Rows[i]["agent"]}");
+                    //ep.SetText(8 + row, 5, $"{ds.Tables[0].Rows[i]["product"]}");
+                    //ep.SetText(8 + row, 6, $"{ds.Tables[0].Rows[i]["perso"]}");
+                    //ep.SetText(8 + row, 7, $"{ds.Tables[0].Rows[i]["perso"]}");
+                    o8[i, 0] = $"{i + 1}";
+                    o8[i, 1] = ds.Tables[0].Rows[i]["bank"].ToString();
+                    o8[i, 2] = ds.Tables[0].Rows[i]["mfo"].ToString();
+                    o8[i, 3] = ds.Tables[0].Rows[i]["agent"].ToString();
+                    o8[i, 4] = ds.Tables[0].Rows[i]["product"].ToString();
+                    o8[i, 5] = ds.Tables[0].Rows[i]["perso"].ToString();
+                    o8[i, 6] = ds.Tables[0].Rows[i]["perso"].ToString();
+                    row++;
+                }
+                ep.SetRangeData(8, 1, 8 + row - 1, 7, o8);
+                ep.ShowRows(8, 8 + row);
                 ds.Clear();
                 ExecuteQuery($"select distinct dbo.BranchBank(id_branchcard) as b from V_Cards_StorageDocs where id_doc={id_doc}", ref ds, null);
                 for (int i = 0; i < ds.Tables[0].Rows.Count - 1; i++)
                 {
                     ep.SetWorkSheet(9);
+                    ep.SetText_Name("date9_str", $"Дата {dt_doc:dd.MM.yyyy}");
                     ep.AddWorkSheet(9);
                 }
                 ArrayList banks = new ArrayList();
@@ -6380,46 +6734,74 @@ namespace CardPerso
                     banks.Add(ds.Tables[0].Rows[i]["b"].ToString());
                 }
                 int index = 0;
-                foreach(string b in banks)
+                foreach (string b in banks)
                 {
+                    //WebLog.LogClass.WriteToLog("List 9_" + index.ToString());
                     ep.SetWorkSheet(9 + index);
                     ds.Clear();
                     row = 0;
                     ExecuteQuery($"select dbo.BranchMainDep(id_BranchCard) as mfo, dbo.BranchDep(id_BranchCard) as agent, dbo.Productname(id_prb) as product, pan, fio from V_Cards_StorageDocs where id_doc={id_doc} and dbo.BranchBank(id_branchCard)='{b}' order by mfo, agent, product, pan_unmasked, pan", ref ds, null);
                     ep.SetText(5, 5, b);
-                    for (int i=0; i < ds.Tables[0].Rows.Count; i++)
+                    object[,] o9 = new object[ds.Tables[0].Rows.Count,9];
+                    if (ds.Tables[0].Rows.Count > 1)
+                        ep.CopyRangeFormat(8, 1, 8, 10, 9, 1, 8 + ds.Tables[0].Rows.Count - 1, 10);
+
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
-                        ep.SetText(8 + row, 1, $"{i+1}");
-                        ep.SetText(8 + row, 2, ds.Tables[0].Rows[i]["mfo"].ToString());
-                        ep.SetText(8 + row, 3, ds.Tables[0].Rows[i]["agent"].ToString());
-                        ep.SetText(8 + row, 4, ds.Tables[0].Rows[i]["product"].ToString());
-                        ep.SetText(8 + row, 5, ds.Tables[0].Rows[i]["pan"].ToString());
-                        ep.SetText(8 + row, 9, ds.Tables[0].Rows[i]["fio"].ToString());
+                        //ep.SetText(8 + row, 1, $"{i + 1}");
+                        //ep.SetText(8 + row, 2, ds.Tables[0].Rows[i]["mfo"].ToString());
+                        //ep.SetText(8 + row, 3, ds.Tables[0].Rows[i]["agent"].ToString());
+                        //ep.SetText(8 + row, 4, ds.Tables[0].Rows[i]["product"].ToString());
+                        //ep.SetText(8 + row, 5, ds.Tables[0].Rows[i]["pan"].ToString());
+                        //ep.SetText(8 + row, 9, ds.Tables[0].Rows[i]["fio"].ToString());
+                        o9[i, 0] = $"{i + 1}";
+                        o9[i, 1] = ds.Tables[0].Rows[i]["mfo"].ToString();
+                        o9[i, 2] = ds.Tables[0].Rows[i]["agent"].ToString();
+                        o9[i, 3] = ds.Tables[0].Rows[i]["product"].ToString();
+                        o9[i, 4] = ds.Tables[0].Rows[i]["pan"].ToString();
+                        o9[i, 8] = ds.Tables[0].Rows[i]["fio"].ToString();
                         row++;
                     }
-                    ep.SetRangeBorders(8, 1, 8 + row, 10);
+                    ep.SetRangeData(8, 1, 8 + ds.Tables[0].Rows.Count - 1, 10, o9);
+//                    ep.SetRangeBorders(8, 1, 8 + row, 10);
                     index++;
                 }
+                if (index == 0)
+                    index++;
+                //WebLog.LogClass.WriteToLog("List 10");
                 ep.SetWorkSheet(9 + index);
                 ds.Clear();
                 row = 0;
-                ExecuteQuery($"select dbo.BranchBank(id_BranchCard) as bank, dbo.BranchMainDep(id_BranchCard) as mfo, dbo.BranchDep(id_BranchCard) as agent, dbo.Productname(id_prb) as product, pan, fio, passport from V_Cards_StorageDocs where id_doc={id_doc} order by pan_unmasked, pan, agent, bank", ref ds, null);
+                ExecuteQuery($"select dbo.BranchBank(id_BranchCard) as bank, dbo.BranchMainDep(id_BranchCard) as mfo, dbo.BranchDep(id_BranchCard) as agent, dbo.BranchDepartment(id_BranchCard) as department, dbo.Productname(id_prb) as product, pan, fio, passport from V_Cards_StorageDocs where id_doc={id_doc} order by pan_unmasked, pan, agent, bank", ref ds, null);
+                object [,] o10 = new object[ds.Tables[0].Rows.Count, 11];
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-                {                    
-                    ep.SetText(2 + row, 1, ds.Tables[0].Rows[i]["pan"].ToString());
-                    ep.SetText(2 + row, 2, ds.Tables[0].Rows[i]["fio"].ToString());
-                    ep.SetText(2 + row, 3, ds.Tables[0].Rows[i]["bank"].ToString());
-                    ep.SetText(2 + row, 4, ds.Tables[0].Rows[i]["mfo"].ToString());
-                    ep.SetText(2 + row, 5, ds.Tables[0].Rows[i]["agent"].ToString());
-                    ep.SetText(2 + row, 6, $"{dt_doc:dd.MM.yyyy}");
+                {
+                    //ep.SetText(2 + row, 1, ds.Tables[0].Rows[i]["pan"].ToString());
+                    //ep.SetText(2 + row, 2, ds.Tables[0].Rows[i]["fio"].ToString());
+                    //ep.SetText(2 + row, 3, ds.Tables[0].Rows[i]["bank"].ToString());
+                    //ep.SetText(2 + row, 4, ds.Tables[0].Rows[i]["mfo"].ToString());
+                    //ep.SetText(2 + row, 5, ds.Tables[0].Rows[i]["agent"].ToString());
+                    //ep.SetText(2 + row, 6, $"{dt_doc:dd.MM.yyyy}");
+                    //string pass = (ds.Tables[0].Rows[i]["passport"] == null || ds.Tables[0].Rows[i]["passport"] == DBNull.Value) ? "" : ds.Tables[0].Rows[i]["passport"].ToString();
+                    //ep.SetText(2 + row, 7, pass.Split(' ')?[0]);
+                    //ep.SetText(2 + row, 8, (pass.Split(' ').Length > 1) ? pass.Split(' ')[1] : "");
+                    //ep.SetText(2 + row, 9, ds.Tables[0].Rows[i]["product"].ToString());
+                    //ep.SetText(2 + row, 10, ds.Tables[0].Rows[i]["pan"].ToString().Substring(0, 9).Replace(" ", ""));
+                    o10[i,0] = ds.Tables[0].Rows[i]["pan"].ToString();
+                    o10[i, 1] = ds.Tables[0].Rows[i]["fio"].ToString();
+                    o10[i, 2] =  ds.Tables[0].Rows[i]["bank"].ToString();
+                    o10[i, 3] =  ds.Tables[0].Rows[i]["mfo"].ToString();
+                    o10[i, 4] = ds.Tables[0].Rows[i]["agent"].ToString();
+                    o10[i, 5] =  $"{dt_doc:dd.MM.yyyy}";
                     string pass = (ds.Tables[0].Rows[i]["passport"] == null || ds.Tables[0].Rows[i]["passport"] == DBNull.Value) ? "" : ds.Tables[0].Rows[i]["passport"].ToString();
-                    ep.SetText(2 + row, 7, pass.Split(' ')?[0]);
-                    ep.SetText(2 + row, 8, (pass.Split(' ' ).Length > 1) ? pass.Split(' ')[1] : "");
-                    ep.SetText(2 + row, 9, ds.Tables[0].Rows[i]["product"].ToString());
-                    ep.SetText(2 + row, 10, ds.Tables[0].Rows[i]["pan"].ToString().Substring(0, 9).Replace(" ",""));                    
+                    o10[i, 6] = pass.Split(' ')?[0];
+                    o10[i, 7] = (pass.Split(' ').Length > 1) ? pass.Split(' ')[1] : "";
+                    o10[i, 8] = ds.Tables[0].Rows[i]["product"].ToString();
+                    o10[i, 9] = ds.Tables[0].Rows[i]["pan"].ToString().Substring(0, 9).Replace(" ", "");
+                    o10[i, 10] = ds.Tables[0].Rows[i]["department"].ToString();
                     row++;
                 }
-
+                ep.SetRangeData(2, 1, 2 + ds.Tables[0].Rows.Count - 1, 11, o10);
             }
             #endregion
             #region Приложение6 - SendToFilial
@@ -8894,5 +9276,49 @@ namespace CardPerso
             return 0;
         }
 
+        private void SendToRabbit(RabbitMessage rabbitData)
+        {
+            IConnection conn = null;
+            IModel model = null;
+            RabbitMQSection rabbit = (RabbitMQSection) ConfigurationManager.GetSection("rabbitmq");
+            if (rabbit.IsEnabled.ToLower() != "true")
+                return;
+            ConnectionFactory factory = new ConnectionFactory()
+            {
+                UserName = rabbit.rCredential.RabbitLogin,
+                Password = rabbit.rCredential.RabbitPassword,
+                VirtualHost = rabbit.rEndpoint.RabbitHost,
+                HostName = rabbit.rEndpoint.RabbitAddress
+            };
+            try
+            {
+                conn = factory.CreateConnection();
+                model = conn.CreateModel();
+                model.ExchangeDeclare(rabbit.rChannel.RabbitExchange, ExchangeType.Direct);
+                model.QueueDeclare(rabbit.rChannel.RabbitQueue, false, false, false, null);
+                model.QueueBind(rabbit.rChannel.RabbitQueue, rabbit.rChannel.RabbitExchange,
+                    rabbit.rChannel.RabbitRoutingKey, null);
+                var serializer = new Newtonsoft.Json.JsonSerializer();
+                var stringWriter = new StringWriter();
+                using (var writer = new Newtonsoft.Json.JsonTextWriter(stringWriter))
+                {
+                    writer.QuoteName = false;
+                    writer.Formatting = Newtonsoft.Json.Formatting.None;
+                    serializer.Serialize(writer, rabbitData);
+                }
+
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(stringWriter.ToString());
+                model.BasicPublish(rabbit.rChannel.RabbitExchange, rabbit.rChannel.RabbitRoutingKey, null, bytes);
+            }
+            catch (Exception ex)
+            {
+                WebLog.LogClass.WriteToLog($"RabbitMQ error: {ex.ToString()}");
+            }
+            finally
+            {
+                model?.Close();
+                conn?.Close();
+            }
+        }
     }
 }

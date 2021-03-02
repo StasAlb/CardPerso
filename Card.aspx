@@ -92,6 +92,10 @@
                     SortExpression="pan" >
                         <ItemStyle HorizontalAlign="Left" />
                     </asp:BoundField>
+                    <asp:BoundField DataField="CardIdOW" HeaderText="id" 
+                                    SortExpression="CardIdOW" >
+                        <ItemStyle HorizontalAlign="Left" />
+                    </asp:BoundField>
                     <asp:BoundField DataField="prod_name" HeaderText="Продукт" 
                     SortExpression="prod_name" >
                         <ItemStyle HorizontalAlign="Left" />
@@ -114,6 +118,10 @@
                     </asp:BoundField>
                     <asp:BoundField DataField="passport" HeaderText="Паспорт" 
                     SortExpression="passport" >
+                        <ItemStyle HorizontalAlign="Left" />
+                    </asp:BoundField>
+                    <asp:BoundField DataField="phone" HeaderText="телефон" 
+                                    SortExpression="phone" >
                         <ItemStyle HorizontalAlign="Left" />
                     </asp:BoundField>
                     <asp:BoundField DataField="account" HeaderText="Номер счета" 

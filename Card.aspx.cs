@@ -688,7 +688,7 @@ namespace CardPerso
                     Database.ExecuteScalar(comm, ref obj, null);
                     int cnt = Convert.ToInt32(obj);
                     
-                    bExcel.Enabled = cnt>0 && cnt <= 100;
+                    bExcel.Enabled = cnt>0 && cnt <= 45000;
                     
                     bExcelXML.Enabled = cnt > 0 && cnt <= 30000;
 

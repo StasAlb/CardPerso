@@ -34,6 +34,7 @@ namespace CardPerso
         public string operationId = String.Empty;
         public string packetId = String.Empty;
         public string personnelNumber = String.Empty;
+        public string secondaryStorage = String.Empty;
 
         public string OperDate 
         {
@@ -110,8 +111,25 @@ namespace CardPerso
                 bodyPost.AppendLine(string.Format("\t<InnerCode>{0}</InnerCode>", branchCode));
             }
 
+            if (!String.IsNullOrEmpty(secondaryStorage))
+                bodyPost.AppendLine($"\t<SecondaryStorage>{secondaryStorage}</SecondaryStorage>");
+
             if (!String.IsNullOrEmpty(operationType))
+            {
+                //06.11.20: письмо от 29.10.20, для поддержки спецсимвола * в типе операции, введены 1000-ные номера
+                int o = 0;
+                try
+                {
+                    o = Convert.ToInt32(operationType);
+                    if (o > 1000)
+                        operationType = $"{o-1000}*";
+                }
+                catch 
+                {
+                }
                 bodyPost.AppendLine(string.Format("\t<OperationTypeID>{0}</OperationTypeID>", operationType));
+            }
+
             if (!String.IsNullOrEmpty(operationId))
                 bodyPost.AppendLine(string.Format("\t<OperationID>{0}</OperationID>", operationId));
             //11.03.2020 было закоментарено DocID. Раскоментарил. Потом у дениса все свалилось, заккоментарил обратно

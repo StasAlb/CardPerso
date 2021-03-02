@@ -26,7 +26,7 @@
                 oReportTable.fnDraw();
         }
 
-        setInterval("refresh()", 5000);
+        //setInterval("refresh()", 5000);
         
         $(document).ready(function () {
 
